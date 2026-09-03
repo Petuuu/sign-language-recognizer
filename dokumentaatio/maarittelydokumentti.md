@@ -37,4 +37,4 @@
 
 ## Ydin
 
-Koneoppimismalli(e)n rakentaminen ja kouluttaminen backpropagation algoritmilla luokittelemaan viittomakielen aakkosia kuvasta/videosta tunnistetuista käden maamerkeistä. Datasetin laajentaminen sisältämään dynaamiset aakkoset (J, Z, ääkköset) ehtimisen mukaan
+Koneoppimismalli(e)n rakentaminen ja kouluttaminen backpropagation algoritmilla luokittelemaan viittomakielen aakkosia kuvasta/videosta tunnistetuista käden maamerkeistä.
