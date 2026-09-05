@@ -8,9 +8,9 @@
 
 - **Muut hallitut kielet:** C++, JavaScript
 
-- **Kirjastot:** OpenCV, MediaPipe, PyTorch
+- **Kirjastot:** OpenCV, MediaPipe, NumPy
 
-- **Syöte:** Aluksi ohjelma hyväksyy vain videota/kuvia, myöhemmin pystyy käsittelemään raakaa live-kamerakuvaa. Ohjelma tunnistaa videosta käden/käsien maamerkit, jotka koneoppimismalli(t) luokittelevat kirjaimeksi tai tuntemattomaksi
+- **Syöte:** Aluksi ohjelma hyväksyy vain videota/kuvia, myöhemmin pystyy käsittelemään raakaa live-kamerakuvaa. Ohjelma tunnistaa videosta käden/käsien maamerkit, jotka koneoppimismalli luokittelevat kirjaimeksi tai tuntemattomaksi
 
 - **Algoritmit:**
 
@@ -20,9 +20,9 @@
 
 -> Multi-Layer Perceptron (MLP) staattisia aakkosia varten
 
--> Backpropagation koulutusalgoritmi
+-> Backpropagation koulutusalgoritmi Adam optimoijalla
 
--> Ajan riittämisestä riippuen Gated Recurrent Unit (GRU) dynaamisia aakkosia varten
+(-> Ajan riittämisestä riippuen Gated Recurrent Unit (GRU) dynaamisia aakkosia varten)
 
 - **Lähteet:**
 
@@ -30,11 +30,19 @@
 
 -> MediaPipe hands docs: https://chuoling.github.io/mediapipe/solutions/hands.html
 
--> Pytorch docs: https://docs.pytorch.org/docs/main/
+-> NumPy docs: https://numpy.org/doc/stable/
 
 -> Viittomakielen aakkoset datasetti (aakkoset samat ASL kuin suomeksi): https://www.kaggle.com/datasets/datamunge/sign-language-mnist
+
+-> MLP geeksforgeeks (GFG): https://www.geeksforgeeks.org/deep-learning/multi-layer-perceptron-learning-in-tensorflow/
+
+-> Adam GFG: https://www.geeksforgeeks.org/deep-learning/adam-optimizer/
+
+-> Backpropagation GFG (en käytä lähteenä sivun Python implementaatiota): https://www.geeksforgeeks.org/machine-learning/backpropagation-in-neural-network/
+
+(-> GRU GFG: https://www.geeksforgeeks.org/machine-learning/gated-recurrent-unit-networks/)
 
 
 ## Ydin
 
-Koneoppimismalli(e)n rakentaminen ja kouluttaminen backpropagation algoritmilla luokittelemaan viittomakielen aakkosia kuvasta/videosta tunnistetuista käden maamerkeistä.
+Koneoppimismallin rakentaminen ja kouluttaminen backpropagation algoritmilla Adamia käyttäen luokittelemaan viittomakielen aakkosia kuvasta/videosta tunnistetuista käden maamerkeistä.
