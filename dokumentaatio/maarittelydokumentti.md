@@ -12,6 +12,8 @@
 
 - **Syöte:** Aluksi ohjelma hyväksyy vain videota/kuvia, myöhemmin pystyy käsittelemään raakaa live-kamerakuvaa. Ohjelma tunnistaa videosta käden/käsien maamerkit, jotka koneoppimismalli luokittelevat kirjaimeksi tai tuntemattomaksi
 
+- **Tietorakenteet:** Numpy taulukot (numpy.array)
+
 - **Algoritmit:**
 
 -> Kuvan käsittely OpenCV:llä
