@@ -16,7 +16,7 @@
 
 - **Algorithms:**
 
--> Image processing with OpenCV
+-> Stream processing with OpenCV
 
 -> Hand landmark detection with MediaPipe
 
@@ -28,9 +28,7 @@
 
 - **Sources:**
 
--> OpenCV video docs: https://docs.opencv.org/4.13.0/dd/d43/tutorial_py_video_display.html
-
--> MediaPipe hands docs: https://chuoling.github.io/mediapipe/solutions/hands.html
+-> MediaPipe hand landmarker: https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker
 
 -> NumPy docs: https://numpy.org/doc/stable/
 

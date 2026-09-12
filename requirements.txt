@@ -12,7 +12,6 @@ numpy==2.4.6
 opencv-contrib-python==5.0.0.93
 opencv-python==5.0.0.93
 packaging==26.3
-pandas==3.0.5
 pillow==12.3.0
 pycparser==3.0
 pyparsing==3.3.2

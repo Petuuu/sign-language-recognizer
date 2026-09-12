@@ -1,1 +1,4 @@
+.sign-language-venv/
 dataset/
+samples/images/
+__pychache__
