@@ -1,9 +1,5 @@
 .sign-language-venv/
 dataset/
 samples/images/
-<<<<<<< Updated upstream
-__pychache__
-=======
 src/__pychache__
 __init__
->>>>>>> Stashed changes
