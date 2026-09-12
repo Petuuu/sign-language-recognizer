@@ -4,6 +4,9 @@ from src.image_pipeline import image_detect, stream_detect
 
 
 def main():
+    """Main function of program: Runs appropriate landmark detection based
+    on user input and predicts the letter signed"""
+
     n = input("Detect from images (1, default) or video (2)? ")
     if n == "1" or n == "":
         path = input(

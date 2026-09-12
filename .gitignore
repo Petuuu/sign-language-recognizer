@@ -2,4 +2,4 @@
 dataset/
 samples/images/
 src/__pychache__
-__init__
+__init__.py
