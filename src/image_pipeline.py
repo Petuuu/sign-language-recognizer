@@ -3,20 +3,23 @@ import time
 import numpy as np
 import mediapipe as mp
 from mediapipe.tasks.python import vision
+from mediapipe.tasks.python.vision.hand_landmarker import (
+    HandLandmarkerResult,
+)
 import cv2 as cv
 
 BASE_OPTIONS = mp.tasks.BaseOptions(model_asset_path="models/hand_landmarker.task")
 
 
-def draw_landmarks(img, res):
+def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
     """Draw landmarks and handedness (which hand is in picutre) onto given image
 
     Args:
-        img (numpy.array): image to draw landmarks onto
-        res (vision.HandLandmarkerOptions): result of landmark detection
+        img (numpy.ndarray): image to draw landmarks onto
+        res (HandLandmarkerResult): result of landmark detection
 
     Returns:
-        annotated (numpy.array): copy of original image including landmarks and handedness
+        annotated (numpy.ndarray): copy of original image including landmarks and handedness
     """
 
     mp_hands = vision.HandLandmarksConnections
@@ -57,7 +60,7 @@ def draw_landmarks(img, res):
     return annotated
 
 
-def image_detect(path):
+def image_detect(path: str) -> None:
     """Detect landmarks from images and displays them. Image must be jpg, jpeg, or png
 
     Args:
@@ -106,7 +109,7 @@ def image_detect(path):
             cv.destroyAllWindows()
 
 
-def stream_detect():
+def stream_detect() -> None:
     """Detect landmarks from video stream and display them"""
 
     options = vision.HandLandmarkerOptions(

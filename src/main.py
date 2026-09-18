@@ -3,7 +3,7 @@ from pathlib import Path
 from src.image_pipeline import image_detect, stream_detect
 
 
-def main():
+def main() -> None:
     """Main function of program: Runs appropriate landmark detection based
     on user input and predicts the letter signed"""
 
