@@ -1,16 +1,16 @@
 ## Time log
 
 | Date | Time | Topic | Description | Learned |
-|-----|------|------|--------|--------|
-| 31.8. | 1 h | aiheen keksiminen | Pohdin aiheen rajausta ||
-| 2.9. | 1 h | aiheen määrittely | Laadin määrittelydokumenttia annettujen ohjeiden mukaisesti |
-| 3.9. | 1 h | määrittelydokumentti ja materiaali | Työstin määrittelydokumenttia ja etsin sopivaa opetusdatasettiä. Otettu yhteyttä Hannuun määrittelydokumentista. PyTorchin käyttö poistettu suunnitelmasta |
-| 4.9. | 2 h | lähteet | Etsin sopivat alustavat lähteet projektille |  |
+|------|------|-------|-------------|---------|
+| 31.8. | 1 h | topic | I thought about the scope of the project ||
+| 2.9. | 1 h | topic | I composed the specification document based on given instructions ||
+| 3.9. | 1 h | specification document and dataset | I worked on the specification document, looked for a suitable dataset, and contacted Hannu about said document. PyTorch discarded ||
+| 4.9. | 2 h | sources | I looked for suitable initial sources for the project ||
 
 - **Total:** 5 h
 
 ## Report
 
-- **Progress:** Aihe ja lähteet määritelty
+- **Progress:** Topic and sources specified
 - **Uncertanties ja difficulties:**
 - **Next:** OpenCV and Mediapipe foundation
