@@ -12,5 +12,5 @@
 ## Report
 
 - **Progress:** Topic and sources specified
-- **Uncertanties ja difficulties:**
+- **Uncertanties ja difficulties:** -
 - **Next:** OpenCV and Mediapipe foundation

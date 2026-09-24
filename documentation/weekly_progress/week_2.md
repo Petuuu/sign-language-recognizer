@@ -10,5 +10,5 @@
 ## Report
 
 - **Progress:** dataset gotten familiar with and configured & image pipeline finished, minor tweaks possibly needed
-- **Uncertanties ja difficulties:**
+- **Uncertanties ja difficulties:** -
 - **Next:** finalize image pipeline and start building MLP model
