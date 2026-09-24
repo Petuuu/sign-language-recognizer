@@ -1,20 +1,7 @@
 """Model pretraining"""
 
 import numpy as np
-from src.model import MLP
-
-
-def binary_cross_entropy(inputi: np.ndarray, target: np.ndarray) -> float:
-    """Calculates binary-cross entropy loss
-
-    Args:
-        inputi (np.ndarray): input tensor
-        target (np.ndarray): target tensor
-
-    Returns:
-        calculated loss (float)
-    """
-    return -float(np.mean(target * np.log(inputi) + (1 - target) * np.log1p(-inputi)))
+from src.model.architecture import MLP
 
 
 def train(model: MLP) -> tuple:

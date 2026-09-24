@@ -6,8 +6,10 @@ import numpy as np
 import torch
 from torch import nn
 import torch.nn.functional as F
-from src.model import MLP, Dropout, relu, softmax
-from src.train import binary_cross_entropy, train
+from src.model.architecture import MLP, Dropout
+from src.model.helpers import relu, softmax, cross_entropy
+
+# from src.model_train import train
 
 SIZE = 10000000
 SIZE_SMALL = 10
@@ -61,6 +63,10 @@ class TestModel(unittest.TestCase):
         zero_counts = [sum(drop(x, training=True) == 0.0) for _ in range(500)]
         self.assertAlmostEqual(np.mean(zero_counts), 30, delta=1)
 
+    def test_backpropagation(self):
+        """Tests that data is backpropagated correctly"""
+        self.assertEqual(1, 0)
+
     def test_propagation(self):
         """Tests that loss is propagated and the weight
         updates makes the model improve"""
@@ -68,43 +74,48 @@ class TestModel(unittest.TestCase):
         # train_losses, _, train_accs, _, _ = train(model)
         # self.assertAlmostEqual(train_losses[-1], 0)
         # self.assertEqual(train_accs[-1], 100)
+        self.assertEqual("NOT DONE", "WIP")
 
     def test_gradients(self):
         """Tests that gradients are non-zero and loss decreases"""
+        self.assertEqual("NOT DONE", "WIP")
 
     def test_layers_change(self):
         """Tests that all model layers change after each optimizer step"""
+        self.assertEqual("NOT DONE", "WIP")
 
 
 class TestMethods(unittest.TestCase):
     """Tests mathematical functions"""
 
-    def test_binary_cross_entropy_small(self):
+    def test_cross_entropy_small(self):
         """Tests loss function with small input"""
-        inputi, target = np.random.rand(SIZE_SMALL), np.random.rand(SIZE_SMALL)
+        logits = np.random.rand(SIZE_SMALL)
+        label = np.random.randint(0, SIZE_SMALL)
 
         start = time()
-        own = binary_cross_entropy(inputi, target)
+        own, _ = cross_entropy(logits, label)
         end = time()
         print(f"\nOwn time: {end - start} s")
 
         start = time()
-        correct = F.binary_cross_entropy(torch.tensor(inputi), torch.tensor(target))
+        correct = F.cross_entropy(torch.tensor(logits), torch.tensor(label))
         end = time()
         print(f"PyTorch time: {end - start} s")
         self.assertAlmostEqual(own, correct.item())
 
-    def test_binary_cross_entropy(self):
+    def test_cross_entropy(self):
         """Tests loss function with large input"""
-        inputi, target = np.random.rand(SIZE), np.random.rand(SIZE)
+        logits = np.random.rand(SIZE)
+        label = np.random.randint(0, SIZE)
 
         start = time()
-        own = binary_cross_entropy(inputi, target)
+        own, _ = cross_entropy(logits, label)
         end = time()
         print(f"\nOwn time: {end - start} s")
 
         start = time()
-        correct = F.binary_cross_entropy(torch.tensor(inputi), torch.tensor(target))
+        correct = F.cross_entropy(torch.tensor(logits), torch.tensor(label))
         end = time()
         print(f"PyTorch time: {end - start} s")
         self.assertAlmostEqual(own, correct.item())
@@ -154,7 +165,7 @@ class TestMethods(unittest.TestCase):
         print(f"PyTorch time: {end - start} s")
         np.testing.assert_allclose(own, correct.numpy())
 
-    def test_softmax_small(self):
+    def test_softmax(self):
         """Test Softmax activation fuction with large input"""
         x = np.random.rand(SIZE)
 

@@ -8,7 +8,7 @@
 
 -> Backpropagation GFG (Python implementation not viewed or used): https://www.geeksforgeeks.org/machine-learning/backpropagation-in-neural-network/
 
--> Softmax GFG: https://www.geeksforgeeks.org/deep-learning/the-role-of-softmax-in-neural-networks-detailed-explanation-and-applications/
+-> Softmax and loss GFG: https://www.geeksforgeeks.org/machine-learning/derivative-of-the-softmax-function-and-the-categorical-cross-entropy-loss/
 
 -> Tests for neural networks: https://www.sebastianbjorkqvist.com/blog/writing-automated-tests-for-neural-networks/
 

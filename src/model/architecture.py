@@ -1,6 +1,7 @@
-"""Model architecture and training helper methods"""
+"""Model architecture"""
 
 import numpy as np
+from src.model.helpers import relu, relu_derivative
 
 NUM_LANDMARKS = 63  # 21 × (x, y, z)
 NUM_CLASSES = 22  # letters A-I and K-Y + unknown
@@ -15,6 +16,7 @@ class MLP:
         hidden_sizes (tuple[int, int]): dimensions of hidden layers
         output_size (int): dimension of output layer
         dropout_rate (float): percentage of neurons to be dropped
+        lr (float): learning rate
     """
 
     def __init__(
@@ -22,13 +24,17 @@ class MLP:
         input_size: int = NUM_LANDMARKS,
         hidden_sizes: tuple[int, int] = (128, 64),
         output_size: int = NUM_CLASSES,
+        lr: float = LEARNING_RATE,
     ):
         """Class constructor, creates layers"""
-        self.dense_1 = Dense(input_size, hidden_sizes[0])
+        self.dense_1 = Dense(input_size, hidden_sizes[0], lr)
         self.dropout_1 = Dropout(0.2)
-        self.dense_2 = Dense(hidden_sizes[0], hidden_sizes[1])
+        self.dense_2 = Dense(hidden_sizes[0], hidden_sizes[1], lr)
         self.dropout_2 = Dropout(0.2)
-        self.dense_3 = Dense(hidden_sizes[1], output_size)
+        self.dense_3 = Dense(hidden_sizes[1], output_size, lr)
+
+        self.relu_1_input = None
+        self.relu_2_input = None
 
     def forward(self, x: np.ndarray, training=False) -> np.ndarray:
         """Performs the neural network's forward pass
@@ -41,29 +47,40 @@ class MLP:
             logits (np.ndarray): prediction scores for each class
         """
         x = self.dense_1(x)
-        x = relu(x)
+        x = self.relu_1_input = relu(x)
         x = self.dropout_1(x, training)
 
         x = self.dense_2(x)
-        x = relu(x)
+        x = self.relu_1_input = relu(x)
         x = self.dropout_2(x, training)
 
         logits = self.dense_3(x)
         return logits
 
-    def backward(self, grad: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         """Performs the neural network's backward pass
 
         Args:
             grad (np.ndarray): calculated gradients
 
         Returns:
-            (tuple[np.ndarray, np.ndarray]): updated weights and biases
+            (np.ndarray): final gradient
         """
+        grad = self.dense_3.backward(grad)
+
+        grad = self.dropout_2.backward(grad)
+        grad = relu_derivative(self.relu_2_input, grad)
+        grad = self.dense_2.backward(grad)
+
+        grad = self.dropout_1.backward(grad)
+        grad = relu_derivative(self.relu_1_input, grad)
+        grad = self.dense_1.backward(grad)
+
+        return grad
 
     def __call__(self, x: np.ndarray, training: bool = False) -> np.ndarray:
         """Apply forward pass on function call"""
-        return self.forward(x)
+        return self.forward(x, training)
 
 
 class Dense:
@@ -72,14 +89,16 @@ class Dense:
     Attributes:
         input_size (int): dimension of input features
         output_size (int): dimension of output features
+        lr (float): learning rate
     """
 
-    def __init__(self, input_size: int, output_size: int):
+    def __init__(self, input_size: int, output_size: int, lr: float):
         """Class constructor, initializes weights and biases"""
         self.weights = np.random.normal(size=(input_size, output_size)) * np.sqrt(
             2.0 / input_size
         )
         self.biases = np.zeros(output_size)
+        self.lr = lr
         self.input = None
 
     def forward(self, x: np.ndarray) -> np.ndarray:
@@ -91,18 +110,28 @@ class Dense:
         Returns:
             (np.ndarray): output features
         """
-        self.input = x @ self.weights + self.biases
-        return self.input
+        self.input = x
+        return x @ self.weights + self.biases
 
-    def backward(self, grad: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         """Performs the layer's backward pass
 
         Args:
             grad (np.ndarray): calculated gradients
 
         Returns:
-            (tuple[np.ndarray, np.ndarray]): updated weights and biases
+            (np.ndarray): gradient to pass to the previous layer
         """
+        if self.input is None:
+            raise RuntimeError("Call forward before backward")
+
+        grad_weights = self.input.T @ grad
+        grad_biases = np.sum(grad, axis=0)
+
+        self.weights -= self.lr * grad_weights
+        self.biases -= self.lr * grad_biases
+
+        return grad @ self.weights.T
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         """Apply forward pass on function call"""
@@ -122,6 +151,8 @@ class Dropout:
             raise ValueError("Droupout rate must be in the range [0.0, 1.0)")
 
         self.keep_rate = 1 - rate
+        self.mask = None
+        self.training = None
 
     def forward(self, x: np.ndarray, training: bool = False) -> np.ndarray:
         """Performs the layer's forward pass
@@ -133,59 +164,28 @@ class Dropout:
         Returns:
             probas (np.ndarray): output features
         """
-        if not training or self.keep_rate == 0.0:
+        self.training = training
+        if not training or self.keep_rate == 1.0:
+            self.mask = None
             return x
 
         self.mask = np.random.rand(*x.shape) < self.keep_rate
         return x * self.mask / self.keep_rate
 
-    def backward(self, grad: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         """Performs the layer's backward pass
 
         Args:
             grad (np.ndarray): calculated gradients
 
         Returns:
-            (tuple[np.ndarray, np.ndarray]): updated weights and biases
+            (np.ndarray): gradient to pass to the previous layer
         """
+        if not self.training or self.keep_rate == 1.0:
+            return grad
+
+        return grad * self.mask / self.keep_rate
 
     def __call__(self, x: np.ndarray, training: bool = False) -> np.ndarray:
         """Apply forward pass on function call"""
         return self.forward(x, training)
-
-
-def relu(x: np.ndarray) -> np.ndarray:
-    """ReLu activation function
-
-    Args:
-        x (np.ndarray): input tensor
-
-    Returns:
-        (np.ndarray): output tensor
-    """
-    return np.maximum(0, x)
-
-
-def relu_back(x: np.ndarray, grad: np.ndarray) -> np.ndarray:
-    """ReLu activation function for backward pass
-
-    Args:
-        x (np.ndarray): input tensor
-        grad (np.ndarray): calculated gradient
-
-    Returns:
-        (np.ndarray): output tensor
-    """
-    return grad * (x > 0)
-
-
-def softmax(logits: np.ndarray) -> np.ndarray:
-    """Softmax activation function
-
-    Args:
-        logits (np.ndarray): input logits
-
-    Returns:
-        (np.ndarray): output probabilities
-    """
-    return np.exp(logits) / np.sum(np.exp(logits))
