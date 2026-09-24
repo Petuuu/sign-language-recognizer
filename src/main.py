@@ -1,3 +1,5 @@
+"""Main program"""
+
 import os
 from pathlib import Path
 from src.image_pipeline import image_detect, stream_detect
@@ -8,7 +10,7 @@ def main() -> None:
     on user input and predicts the letter signed"""
 
     n = input("Detect from images (1, default) or video (2)? ")
-    if n == "1" or n == "":
+    if n in ("1", ""):
         path = input(
             "Path to image file/directory from project root (default dataset/sample/): "
         )

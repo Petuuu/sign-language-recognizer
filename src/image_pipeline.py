@@ -1,4 +1,9 @@
+"""Methods for image and video processing and landmarking"""
+
+# pylint: disable=no-member
+
 import os
+import sys
 import time
 import numpy as np
 import mediapipe as mp
@@ -76,7 +81,8 @@ def image_detect(path: str) -> None:
                 if file.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
                     continue
 
-                # OpenCV uses BGR for images, while MediaPipe uses RGB -> colors need to be converted
+                # OpenCV uses BGR for images, while MediaPipe uses RGB
+                # -> colors need to be converted
                 img = cv.imread(str(file))
                 as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
                 mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
@@ -93,7 +99,7 @@ def image_detect(path: str) -> None:
         else:
             if file.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
                 print("Given file is not an image")
-                exit()
+                sys.exit()
 
             img = cv.imread(str(file))
             as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
@@ -119,7 +125,7 @@ def stream_detect() -> None:
         cap = cv.VideoCapture(0)
         if not cap.isOpened():
             print("Cannot open camera")
-            exit()
+            sys.exit()
 
         # OpenCV video capture loop
         while True:

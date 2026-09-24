@@ -1,28 +1,133 @@
+"""Model architecture and training helper methods"""
+
 import numpy as np
-import torch
-import torch.nn.functional as F
-import math
-from time import time
+
+NUM_CLASSES = 22  # letters A-I and K-Y + unknown
+NUM_LANDMARKS = 63  # 21 × (x, y, z)
 
 
-def binary_cross_entropy(input: np.ndarray, target: np.ndarray) -> float:
-    # res = 0.0
-    # for p, y in zip(input.flat, target.flat):
-    #    res -= y * math.log(p) + (1 - y) * math.log(1 - p)
-    # return res / input.size
-    return -float(np.mean(target * np.log(input) + (1 - target) * np.log1p(-input)))
+class MLP:
+    """Multi-Layer Perceptron model architecture
+
+    Attributes:
+        size (int): ????????
+    """
+
+    def __init__(self):
+        """Class constructor, creates layers"""
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """Performs the neural network's forward pass
+
+        Args:
+            x (np.ndarray): input landmarks
+
+        Returns:
+            probas (np.ndarray): probabilities of each class
+        """
+        return x
+
+    def backward(self, grad: np.ndarray) -> np.ndarray:
+        """Performs the neural network's backward pass
+
+        Args:
+            grad (np.ndarray): calculated gradients
+
+        Returns:
+            probas (np.ndarray): probabilities of each class
+        """
 
 
-if __name__ == "__main__":
-    input = np.array([[0.4, 0.5, 0.6], [0.7, 0.8, 0.9]])
-    input = np.random.rand(10000000)
-    target = np.array([[0.5, 0.5, 0.5], [0.8, 0.8, 0.8]])
-    target = np.random.rand(10000000)
-    start = time()
-    print(binary_cross_entropy(input, target))
-    end = time()
-    print(end - start)
-    start = time()
-    print(F.binary_cross_entropy(torch.tensor(input), torch.tensor(target)))
-    end = time()
-    print(end - start)
+class Dense:
+    """Fully connected layer"""
+
+    def __init__(self):
+        """Class constructor, initializes weights and biases"""
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """Performs the layer's forward pass
+
+        Args:
+            x (np.ndarray): input landmarks
+
+        Returns:
+            probas (np.ndarray): probabilities of each class
+        """
+        return x
+
+    def backward(self, grad: np.ndarray) -> np.ndarray:
+        """Performs the layer's backward pass
+
+        Args:
+            grad (np.ndarray): calculated gradients
+
+        Returns:
+            probas (np.ndarray): probabilities of each class
+        """
+
+
+class Dropout:
+    """Dropout layer"""
+
+    def __init__(self):
+        """Class constructor, initializes weights and biases"""
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """Performs the layer's forward pass
+
+        Args:
+            x (np.ndarray): input landmarks
+
+        Returns:
+            probas (np.ndarray): probabilities of each class
+        """
+        return x
+
+    def backward(self, grad: np.ndarray) -> np.ndarray:
+        """Performs the layer's backward pass
+
+        Args:
+            grad (np.ndarray): calculated gradients
+
+        Returns:
+            probas (np.ndarray): probabilities of each class
+        """
+
+    pass
+
+
+def relu(x: np.ndarray) -> np.ndarray:
+    """ReLu activation function
+
+    Args:
+        x (np.ndarray): input tensor
+
+    Returns:
+        (np.ndarray): output tensor
+    """
+    return np.maximum(0, x)
+
+
+def relu_back(x: np.ndarray, grad: np.ndarray) -> np.ndarray:
+    """ReLu activation function for backward pass
+
+    Args:
+        x (np.ndarray): input tensor
+        grad (np.ndarray): calculated gradient
+
+    Returns:
+        (np.ndarray): output tensor
+    """
+    return grad * (x > 0)
+
+
+def softmax(logits: np.ndarray) -> np.ndarray:
+    """Softmax activation function
+
+    Args:
+        logits (np.ndarray): input logits
+
+    Returns:
+        (np.ndarray): output probabilities
+    """
+    return np.exp(logits) / np.sum(np.exp(logits))

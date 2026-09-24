@@ -1,4 +1,5 @@
 .sign-language-venv/
+.pytest_cache
 dataset/
 samples/images/
 __pycache__
