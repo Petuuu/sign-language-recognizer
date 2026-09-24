@@ -19,8 +19,10 @@ class TestModel(unittest.TestCase):
     """Tests model architecture"""
 
     def test_architecture(self):
-        """Tests that data passes through the model correctly"""
-        x = torch.rand(63)
+        """Tests that data passes through the model and is backpropagated correctly"""
+        # Init
+        x_np = np.random.rand(63)
+        x_torch = torch.tensor(x_np, dtype=torch.float32, requires_grad=True)
         model = MLP()
         torch_model = nn.Sequential(
             nn.Linear(63, 128),
@@ -44,17 +46,30 @@ class TestModel(unittest.TestCase):
             )
             torch_model[4].bias.copy_(torch.from_numpy(model.dense_3.biases).float())
 
+        # Forward
         start = time()
-        own = model(x.numpy())
+        own = model(x_np)
         end = time()
         print(f"\nOwn time: {end - start} s")
 
         start = time()
-        with torch.no_grad():
-            correct = torch_model(x)
+        correct = torch_model(x_torch)
         end = time()
         print(f"PyTorch time: {end - start} s")
-        np.testing.assert_allclose(own, correct.numpy(), rtol=1e-5, atol=1e-6)
+        np.testing.assert_allclose(own, correct.detach().numpy(), rtol=1e-5, atol=1e-6)
+
+        # Backward
+        upstream = own.copy()
+        start = time()
+        own = model.backward(own)
+        end = time()
+        print(f"\nOwn time: {end - start} s")
+
+        start = time()
+        correct.backward(torch.tensor(upstream))
+        end = time()
+        print(f"PyTorch time: {end - start} s")
+        np.testing.assert_allclose(own, x_torch.grad.numpy(), rtol=1e-5, atol=1e-6)
 
     def test_dropout(self):
         """Tests that dropout layer works correctly"""
@@ -62,10 +77,6 @@ class TestModel(unittest.TestCase):
         drop = Dropout(0.3)
         zero_counts = [sum(drop(x, training=True) == 0.0) for _ in range(500)]
         self.assertAlmostEqual(np.mean(zero_counts), 30, delta=1)
-
-    def test_backpropagation(self):
-        """Tests that data is backpropagated correctly"""
-        self.assertEqual(1, 0)
 
     def test_propagation(self):
         """Tests that loss is propagated and the weight

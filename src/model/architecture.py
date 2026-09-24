@@ -51,7 +51,7 @@ class MLP:
         x = self.dropout_1(x, training)
 
         x = self.dense_2(x)
-        x = self.relu_1_input = relu(x)
+        x = self.relu_2_input = relu(x)
         x = self.dropout_2(x, training)
 
         logits = self.dense_3(x)
@@ -125,13 +125,14 @@ class Dense:
         if self.input is None:
             raise RuntimeError("Call forward before backward")
 
-        grad_weights = self.input.T @ grad
-        grad_biases = np.sum(grad, axis=0)
+        grad_weights = np.outer(self.input, grad)
+        grad_biases = grad
 
+        grad_input = grad @ self.weights.T
         self.weights -= self.lr * grad_weights
         self.biases -= self.lr * grad_biases
 
-        return grad @ self.weights.T
+        return grad_input
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         """Apply forward pass on function call"""
