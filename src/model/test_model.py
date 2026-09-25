@@ -78,6 +78,10 @@ class TestModel(unittest.TestCase):
         zero_counts = [sum(drop(x, training=True) == 0.0) for _ in range(500)]
         self.assertAlmostEqual(np.mean(zero_counts), 30, delta=1)
 
+    def test_error_checking(self):
+        """Tests that invalid inputs and propagation orders are accounted for"""
+        self.assertEqual("NOT DONE", "WIP")
+
 
 class TestTraining(unittest.TestCase):
     """Tests that model is correctly trained"""
