@@ -19,7 +19,7 @@ def relu_derivative(x: np.ndarray, grad: np.ndarray) -> np.ndarray:
     """Derivative of ReLU activation function for backward pass
 
     Args:
-        x (np.ndarray): input tensor
+        x    (np.ndarray): input tensor
         grad (np.ndarray): calculated gradient
 
     Returns:
@@ -47,11 +47,11 @@ def cross_entropy(logits: np.ndarray, label: int) -> tuple[float, np.ndarray]:
 
     Args:
         logits (np.ndarray): input logits
-        target (np.ndarray): target tensor
+        label  (np.ndarray): index of target label
 
     Returns:
         (tuple):
-            loss (float): calculated loss
+            loss      (float): calculated loss
             grad (np.ndarray): gradient with respect to logits
     """
     loss = float(np.logaddexp.reduce(logits) - logits[label])

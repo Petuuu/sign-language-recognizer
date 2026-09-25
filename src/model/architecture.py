@@ -12,11 +12,11 @@ class MLP:
     """Multi-Layer Perceptron model architecture
 
     Attributes:
-        input_size (int): dimension of input layer
+        input_size               (int): dimension of input layer
         hidden_sizes (tuple[int, int]): dimensions of hidden layers
-        output_size (int): dimension of output layer
-        dropout_rate (float): percentage of neurons to be dropped
-        lr (float): learning rate
+        output_size              (int): dimension of output layer
+        dropout_rate           (float): percentage of neurons to be dropped
+        lr                     (float): learning rate
     """
 
     def __init__(
@@ -40,8 +40,8 @@ class MLP:
         """Perform the neural network's forward pass
 
         Args:
-            x (np.ndarray): input landmarks
-            training (bool): tells whether the model is in training or inference mode
+            x  (np.ndarray): input landmarks
+            training (bool): tells whether the model is in training or inference mode. Defaults to False
 
         Returns:
             logits (np.ndarray): prediction scores for each class
@@ -87,9 +87,9 @@ class Dense:
     """Fully connected layer
 
     Attributes:
-        input_size (int): dimension of input features
+        input_size  (int): dimension of input features
         output_size (int): dimension of output features
-        lr (float): learning rate
+        lr        (float): learning rate
     """
 
     def __init__(self, input_size: int, output_size: int, lr: float):
@@ -159,8 +159,8 @@ class Dropout:
         """Perform the layer's forward pass
 
         Args:
-            x (np.ndarray): input features
-            training (bool): tells whether the model is in training or inference mode
+            x  (np.ndarray): input features
+            training (bool): tells whether the model is in training or inference mode. Defaults to False
 
         Returns:
             probas (np.ndarray): output features
