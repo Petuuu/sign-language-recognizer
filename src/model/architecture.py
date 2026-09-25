@@ -26,7 +26,7 @@ class MLP:
         output_size: int = NUM_CLASSES,
         lr: float = LEARNING_RATE,
     ):
-        """Class constructor, creates layers"""
+        """Class constructor, create layers"""
         self.dense_1 = Dense(input_size, hidden_sizes[0], lr)
         self.dropout_1 = Dropout(0.2)
         self.dense_2 = Dense(hidden_sizes[0], hidden_sizes[1], lr)
@@ -37,7 +37,7 @@ class MLP:
         self.relu_2_input = None
 
     def forward(self, x: np.ndarray, training=False) -> np.ndarray:
-        """Performs the neural network's forward pass
+        """Perform the neural network's forward pass
 
         Args:
             x (np.ndarray): input landmarks
@@ -58,7 +58,7 @@ class MLP:
         return logits
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
-        """Performs the neural network's backward pass
+        """Perform the neural network's backward pass
 
         Args:
             grad (np.ndarray): calculated gradients
@@ -93,7 +93,7 @@ class Dense:
     """
 
     def __init__(self, input_size: int, output_size: int, lr: float):
-        """Class constructor, initializes weights and biases"""
+        """Class constructor, initialize weights and biases"""
         self.weights = np.random.normal(size=(input_size, output_size)) * np.sqrt(
             2.0 / input_size
         )
@@ -102,7 +102,7 @@ class Dense:
         self.input = None
 
     def forward(self, x: np.ndarray) -> np.ndarray:
-        """Performs the layer's forward pass
+        """Perform the layer's forward pass
 
         Args:
             x (np.ndarray): input features
@@ -114,7 +114,7 @@ class Dense:
         return x @ self.weights + self.biases
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
-        """Performs the layer's backward pass
+        """Perform the layer's backward pass
 
         Args:
             grad (np.ndarray): calculated gradients
@@ -147,7 +147,7 @@ class Dropout:
     """
 
     def __init__(self, rate: float):
-        """Class constructor, initializes weights and biases"""
+        """Class constructor, initialize weights and biases"""
         if not 0 <= rate < 1:
             raise ValueError("Droupout rate must be in the range [0.0, 1.0)")
 
@@ -156,7 +156,7 @@ class Dropout:
         self.training = None
 
     def forward(self, x: np.ndarray, training: bool = False) -> np.ndarray:
-        """Performs the layer's forward pass
+        """Perform the layer's forward pass
 
         Args:
             x (np.ndarray): input features
@@ -174,7 +174,7 @@ class Dropout:
         return x * self.mask / self.keep_rate
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
-        """Performs the layer's backward pass
+        """Perform the layer's backward pass
 
         Args:
             grad (np.ndarray): calculated gradients

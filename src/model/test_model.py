@@ -8,8 +8,7 @@ from torch import nn
 import torch.nn.functional as F
 from src.model.architecture import MLP, Dropout
 from src.model.helpers import relu, softmax, cross_entropy
-
-# from src.model_train import train
+from src.model.train import train
 
 SIZE = 10000000
 SIZE_SMALL = 10
@@ -78,14 +77,17 @@ class TestModel(unittest.TestCase):
         zero_counts = [sum(drop(x, training=True) == 0.0) for _ in range(500)]
         self.assertAlmostEqual(np.mean(zero_counts), 30, delta=1)
 
+
+class TestTraining(unittest.TestCase):
+    """Tests that model is correctly trained"""
+
     def test_propagation(self):
         """Tests that loss is propagated and the weight
         updates makes the model improve"""
-        # model = MLP()
-        # train_losses, _, train_accs, _, _ = train(model)
-        # self.assertAlmostEqual(train_losses[-1], 0)
-        # self.assertEqual(train_accs[-1], 100)
-        self.assertEqual("NOT DONE", "WIP")
+        model = MLP()
+        train_losses, _, train_accs, _, _ = train(model)
+        self.assertAlmostEqual(train_losses[-1], 0)
+        self.assertEqual(train_accs[-1], 100)
 
     def test_gradients(self):
         """Tests that gradients are non-zero and loss decreases"""

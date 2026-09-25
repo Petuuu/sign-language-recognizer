@@ -43,7 +43,7 @@ def softmax(logits: np.ndarray) -> np.ndarray:
 
 
 def cross_entropy(logits: np.ndarray, label: int) -> tuple[float, np.ndarray]:
-    """Calculates cross-entropy loss
+    """Cross-entropy loss
 
     Args:
         logits (np.ndarray): input logits
