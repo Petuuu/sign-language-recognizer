@@ -31,6 +31,7 @@ class TestModel(unittest.TestCase):
             nn.Linear(64, 22),
         )
 
+        # Copy weights from own model to PyTorch's
         with torch.no_grad():
             torch_model[0].weight.copy_(
                 torch.from_numpy(model.dense_1.weights.T).float()

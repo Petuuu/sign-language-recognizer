@@ -1,5 +1,7 @@
 .sign-language-venv/
 .pytest_cache
+pytest.ini
+.coveragerc
 dataset/
 samples/images/
 __pycache__
