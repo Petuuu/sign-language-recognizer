@@ -108,7 +108,6 @@ def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
     Returns:
         annotated (numpy.ndarray): copy of original image including landmarks and handedness
     """
-
     mp_hands = vision.HandLandmarksConnections
     mp_drawing = vision.drawing_utils
     mp_drawing_styles = vision.drawing_styles
@@ -146,7 +145,7 @@ def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
 
 def landmarks_to_csv(path: str, output_path: str = "dataset/landmarks.csv") -> None:
     """Detect landmarks from images and save them to CSV file. Label is extracted from the first
-    letter of image files
+    letter of image files. Image must be jpg, jpeg, or png
 
     Args:
         path (str): path to an image directory or file
@@ -211,7 +210,6 @@ def image_detect(path: str) -> None:
     Args:
         path (str): path to an image directory or file
     """
-
     options = vision.HandLandmarkerOptions(
         base_options=BASE_OPTIONS, num_hands=2, running_mode=vision.RunningMode.IMAGE
     )
@@ -255,7 +253,6 @@ def image_detect(path: str) -> None:
 
 def stream_detect() -> None:
     """Detect landmarks from video stream and display them"""
-
     options = vision.HandLandmarkerOptions(
         base_options=BASE_OPTIONS, num_hands=2, running_mode=vision.RunningMode.VIDEO
     )

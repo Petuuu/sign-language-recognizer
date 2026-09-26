@@ -7,9 +7,9 @@
 | 25.9. | 4 h || created backward passes + test. fixed backward passes according to test | much deeper understanding on how data backpropagates through a neural network |
 || 2 h | image processing + test coverage | started creating function to save extracted hand landmarks into a CSV file and introduced myself with coverage | coverage usage |
 | 26.9. | 1.5 h | documentation | create implementation and test documents and add coverage and pylint reports ||
-||||||
+|| 2 h | image pipeline | finish function to save landmarks to a CSV file and create function to center landmarks at the wrist and normalize their scale using the distance between the wrist and the middle finger's MCP joint + test for normalization ||
 
-- **Total:** 13.5 h
+- **Total:** 15.5 h
 
 ## Report
 
