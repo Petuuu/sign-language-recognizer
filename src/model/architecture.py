@@ -4,7 +4,7 @@ import numpy as np
 from src.model.helpers import relu, relu_derivative
 
 NUM_LANDMARKS = 63  # 21 × (x, y, z)
-NUM_CLASSES = 22  # letters A-I and K-Y + unknown
+NUM_CLASSES = 25  # letters A-I and K-Y + unknown
 LEARNING_RATE = 0.01
 
 

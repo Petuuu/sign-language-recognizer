@@ -20,7 +20,7 @@
 
 -> Hand landmark detection with MediaPipe
 
--> Multi-Layer Perceptron (MLP) for static letters
+-> Multi-Layer Perceptron (MLP) for static letters (A-I, K-Y)
 
 -> Backpropagation training algorithm with the Adam optimizer
 

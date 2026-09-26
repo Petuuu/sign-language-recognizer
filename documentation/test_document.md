@@ -1,6 +1,6 @@
 ## General
 
-**WIP**: Training and validation losses and accuracies are available as a plot and a text file in `model_results/`. The directory also contains results showing how the pretrained model classifies images and video of me signing each valid letter. N.B I was not included in the training data.
+**WIP**: Training and validation losses and accuracies are available as a plot and a text file in `model_results/`. The directory also contains results showing how the pretrained model classifies images and stream of me signing each valid letter. N.B I was not included in the training data.
 
 ## Coverage report
 
@@ -60,14 +60,19 @@ All tests can be run from the project root directory with
 pytest
 ```
 
+Individual test file can be run with
+```bash
+pytest src/tests/test_*NAME*.py
+```
+
 Individual test groups can by run with
 ```bash
-pytest test_model.py::*CLASS_NAME*
+pytest src/tests/test_*NAME*.py::*CLASS_NAME*
 ```
 
 Individual tests can be run with
 ```bash
-pytest test_model.py::*CLASS_NAME*::*METHOD_NAME*
+pytest src/tests/test_*NAME*.py::*CLASS_NAME*::*METHOD_NAME*
 ```
 
 The coverage report can be composed with

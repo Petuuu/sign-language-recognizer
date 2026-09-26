@@ -3,25 +3,29 @@
 ```
 sign-language-recognizer/
 ├── documentation/
-|   ├── coverage_report.txt
+|   ├── weekly_progress/
+|   |   ├── week_1.md
+|   |   ...
+|   |   └── week_6.md
 |   ├── implementation_document.md
 |   ├── pylint_report.txt
 |   ├── specification_document.md
-|   ├── test_document.md
-|   └── weekly_progress/
-|       ├── week_1.md
-|       ...
-|       └── week_6.md
+|   └── test_document.md
+├── model_results/
+|   ├── ......
 ├── models/
 |   └── hand_landmarker.task
 ├── src/
+|   ├── model/
+|   |   ├── architecture.py
+|   |   ├── helpers.py
+|   |   └── train.py
+|   ├── tests/
+|   |   ├── test_model.py
+|   |   └── test_image_pipeline.py
 |   ├── image_pipeline.py
-|   ├── main.py
-|   └── model/
-|       ├── architecture.py
-|       ├── helpers.py
-|       ├── test_model.py
-|       └── train.py
+|   └── main.py
+├── .coverage
 ├── .gitignore
 ├── dataset.zip
 ├── LICENSE
@@ -29,15 +33,16 @@ sign-language-recognizer/
 └── requirements.txt
 ```
 
-- `dataset.zip`: images used in project
+- `weekly_progress/`: weekly progress reports
 - `implementation_document.md`: project structure, implementation details, and final sources
 - `specification_document.md`: project overview and initial sources
 - `test_document.md`: testing overview and results
-- `weekly_progress/`: weekly progress reports
+- `model_results/`: pretraining log and results showing how the pretrained model classifies letters from images and stream
 - `models/`: machine learning models related to project
+- `src/model/`: building and training implemented machine learning model
 - `src/image_pipeline.py`: image and video processing and landmarking
 - `src/main.py`: main program
-- `src/model/`: building, training, and testing implemented machine learning model
+- `dataset.zip`: images used in project
 
 ## Possible flaws and improvements
 
@@ -49,7 +54,7 @@ Performance of model tested against PyTorch equivalents with n=10^8. Data propag
 
 ## LLM usage
 
-Duck.ai (GPT-5.6 Luna) used to correct isolated syntax errors and help identify the root causes of other errors. Although it struggled identifying the root causes, its suggestions helped me discover them myself.
+Duck.ai (GPT-5.6 Luna) used to correct isolated syntax errors and help identify the root causes of other errors. Although it often struggled identifying the root causes, its suggestions helped me discover them myself.
 
 ## Final sources
 

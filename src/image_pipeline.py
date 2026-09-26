@@ -8,12 +8,94 @@ import time
 import numpy as np
 import mediapipe as mp
 from mediapipe.tasks.python import vision
+from mediapipe.tasks.python.components.containers.landmark import NormalizedLandmark
 from mediapipe.tasks.python.vision.hand_landmarker import (
     HandLandmarkerResult,
 )
 import cv2 as cv
 
 BASE_OPTIONS = mp.tasks.BaseOptions(model_asset_path="models/hand_landmarker.task")
+LETTER_TO_LABEL = {
+    "UNK": 0,
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 4,
+    "E": 5,
+    "F": 6,
+    "G": 7,
+    "H": 8,
+    "I": 9,
+    "K": 10,
+    "L": 11,
+    "M": 12,
+    "N": 13,
+    "O": 14,
+    "P": 15,
+    "Q": 16,
+    "R": 17,
+    "S": 18,
+    "T": 19,
+    "U": 20,
+    "V": 21,
+    "W": 22,
+    "X": 23,
+    "Y": 24,
+}
+LABEL_TO_LETTER = {
+    0: "UNK",
+    1: "A",
+    2: "B",
+    3: "C",
+    4: "D",
+    5: "E",
+    6: "F",
+    7: "G",
+    8: "H",
+    9: "I",
+    10: "K",
+    11: "L",
+    12: "M",
+    13: "N",
+    14: "O",
+    15: "P",
+    16: "Q",
+    17: "R",
+    18: "S",
+    19: "T",
+    20: "U",
+    21: "V",
+    22: "W",
+    23: "X",
+    24: "Y",
+}
+HANDEDNESS_INDEX_TO_NAME = {0: "Right", 1: "Left"}
+
+
+def normalize_landmarks(landmarks: list[NormalizedLandmark]) -> list:
+    """Center landmarks at the wrist and normalize their scale using the distance
+    between the wrist and the middle finger's MCP joint
+
+    Args:
+        landmarks (list[NormalizedLandmark]): landmarks to normalize
+
+    Returns:
+        points (np.ndarray): normalized landmarks excluding wrist
+    """
+    points = np.array([[lm.x, lm.y, lm.x] for lm in landmarks], dtype=np.float64)
+
+    # points[0] is the landmark for the wrist
+    points -= points[0]
+
+    # points[9] is the landmark for the middle finger's MCP joint
+    # `None` is returned if scale is too small
+    scale = np.linalg.norm(points[9])
+    if scale <= 1e-6:
+        return None
+
+    points /= scale
+    points = points[1:].flatten()
+    return points.tolist()
 
 
 def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
@@ -32,10 +114,7 @@ def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
     mp_drawing_styles = vision.drawing_styles
     annotated = np.copy(img)
 
-    for i in range(len(res.hand_landmarks)):
-        landmarks = res.hand_landmarks[i]
-        handedness = res.handedness[i]
-
+    for i, landmarks in enumerate(res.hand_landmarks):
         mp_drawing.draw_landmarks(
             annotated,
             landmarks,
@@ -53,7 +132,7 @@ def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
 
         cv.putText(
             annotated,
-            f"{handedness[0].category_name}",
+            res.handedness[i][0].category_name,
             (text_x, text_y),
             cv.FONT_HERSHEY_COMPLEX_SMALL,
             1,
@@ -63,6 +142,67 @@ def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
         )
 
     return annotated
+
+
+def landmarks_to_csv(path: str, output_path: str = "dataset/landmarks.csv") -> None:
+    """Detect landmarks from images and save them to CSV file. Label is extracted from the first
+    letter of image files
+
+    Args:
+        path (str): path to an image directory or file
+        output_path (str): path to output CSV file. Defaults to "dataset/landmarks.csv"
+    """
+    if os.path.exists(output_path):
+        confirm = input("File already exists. Overide? [Y/n] ")
+        if confirm not in ("Y", "y"):
+            print("Exiting...")
+            sys.exit()
+
+    options = vision.HandLandmarkerOptions(
+        base_options=BASE_OPTIONS, num_hands=2, running_mode=vision.RunningMode.IMAGE
+    )
+    with vision.HandLandmarker.create_from_options(options) as detector:
+        with open(output_path, "w", encoding="utf-8") as f:
+            if os.path.isdir(path):
+                for file in path.rglob("*"):
+                    if file.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
+                        continue
+
+                    # OpenCV uses BGR for images, while MediaPipe uses RGB
+                    # -> colors need to be converted
+                    img = cv.imread(str(file))
+                    as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+                    mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
+                    res = detector.detect(mp_img)
+
+                    # format result and save to file
+                    if len(res.hand_landmarks) > 1:
+                        raise ValueError("Only one hand allowed in a single picture")
+                    label = LETTER_TO_LABEL[file.stem[0].upper()]
+                    handedness = res.handedness[0][0].index
+                    normalized = ",".join(
+                        [str(x) for x in normalize_landmarks(res.hand_landmarks[0])]
+                    )
+                    f.write(f"{label},{handedness},{normalized}\n")
+
+            else:
+                if path.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
+                    print("Given file is not an image. Exiting...")
+                    sys.exit()
+
+                img = cv.imread(str(path))
+                as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+                mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
+                res = detector.detect(mp_img)
+
+                if len(res.hand_landmarks) > 1:
+                    raise ValueError("Only one hand allowed in a single picture")
+                label = LETTER_TO_LABEL[path.stem[0].upper()]
+                handedness = res.handedness[0][0].index
+                normalized = ",".join(
+                    [str(x) for x in normalize_landmarks(res.hand_landmarks[0])]
+                )
+                f.write(f"{label},{handedness},{normalized}\n")
 
 
 def image_detect(path: str) -> None:
@@ -77,12 +217,10 @@ def image_detect(path: str) -> None:
     )
     with vision.HandLandmarker.create_from_options(options) as detector:
         if os.path.isdir(path):
-            for file in path.iterdir():
+            for file in path.rglob("*"):
                 if file.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
                     continue
 
-                # OpenCV uses BGR for images, while MediaPipe uses RGB
-                # -> colors need to be converted
                 img = cv.imread(str(file))
                 as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
                 mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
@@ -97,11 +235,11 @@ def image_detect(path: str) -> None:
                 cv.destroyAllWindows()
 
         else:
-            if file.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
+            if path.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
                 print("Given file is not an image")
                 sys.exit()
 
-            img = cv.imread(str(file))
+            img = cv.imread(str(path))
             as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
             mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
             res = detector.detect(mp_img)
