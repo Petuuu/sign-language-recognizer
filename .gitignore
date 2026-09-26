@@ -1,8 +1,10 @@
 .sign-language-venv/
+dataset/
+__pycache__
+__init__.py
+
+# testing
 .pytest_cache
 pytest.ini
 .coveragerc
-dataset/
-samples/images/
-__pycache__
-__init__.py
+htmlcov/

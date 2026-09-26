@@ -5,8 +5,10 @@
 | 24.9. | 3 h | model and tests | created base for MLP and created activation functions and tests for each | unittest usage |
 || 3 h || created MLP architecture and forward passes + tests for each part ||
 | 25.9. | 4 h || created backward passes + test. fixed backward passes according to test | much deeper understanding on how data backpropagates through a neural network |
+|| 2 h | image processing + test coverage | started creating function to save extracted hand landmarks into a CSV file and introduced myself with coverage | coverage usage |
+||||||
 
-- **Total:** 10 h
+- **Total:** 12 h
 
 ## Report
 

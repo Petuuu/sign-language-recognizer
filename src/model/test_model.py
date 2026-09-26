@@ -10,7 +10,7 @@ from src.model.architecture import MLP, Dropout
 from src.model.helpers import relu, softmax, cross_entropy
 from src.model.train import train
 
-SIZE = 10000000
+SIZE = 100000000
 SIZE_SMALL = 10
 
 
