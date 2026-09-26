@@ -26,9 +26,11 @@ sign-language-recognizer/
 |   ├── image_pipeline.py
 |   └── main.py
 ├── .coverage
+├── .coveragerc
 ├── .gitignore
 ├── dataset.zip
 ├── LICENSE
+├── pytest.ini
 ├── README.md
 └── requirements.txt
 ```

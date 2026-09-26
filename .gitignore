@@ -5,6 +5,4 @@ __init__.py
 
 # testing
 .pytest_cache
-pytest.ini
-.coveragerc
 htmlcov/
