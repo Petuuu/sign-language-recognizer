@@ -1,7 +1,0 @@
-Name                        Stmts   Miss Branch BrPart  Cover   Missing
------------------------------------------------------------------------
-src/model/architecture.py      74      3      8      3    93%   126, 152, 188
-src/model/helpers.py           14      0      0      0   100%
-src/model/train.py              4      0      0      0   100%
------------------------------------------------------------------------
-TOTAL                          92      3      8      3    94%

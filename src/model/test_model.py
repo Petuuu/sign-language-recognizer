@@ -88,7 +88,7 @@ class TestTraining(unittest.TestCase):
 
     def test_propagation(self):
         """Tests that loss is propagated and the weight
-        updates makes the model improve"""
+        updates make the model improve"""
         model = MLP()
         train_losses, _, train_accs, _, _ = train(model)
         self.assertAlmostEqual(train_losses[-1], 0)
