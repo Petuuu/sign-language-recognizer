@@ -20,19 +20,22 @@ sign-language-recognizer/
 |   |   ├── architecture.py
 |   |   ├── helpers.py
 |   |   └── train.py
-|   ├── tests/
-|   |   ├── test_model.py
-|   |   └── test_image_pipeline.py
+|   ├── __init__.py
 |   ├── image_pipeline.py
 |   └── main.py
+├── tests/
+|   ├── __init__.py
+|   ├── test_model.py
+|   └── test_image_pipeline.py
 ├── .coverage
 ├── .coveragerc
 ├── .gitignore
 ├── dataset.zip
 ├── LICENSE
+├── poetry.lock
+├── pyproject.toml
 ├── pytest.ini
-├── README.md
-└── requirements.txt
+└── README.md
 ```
 
 - `weekly_progress/`: weekly progress reports
