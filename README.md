@@ -2,7 +2,7 @@
 
 A computer vision program that recognizes finnish sign language letters (same as ASL with the addition of Ä, Ö, and Å) based on hand landmarks.
 
-Only static letters can be recognizes, i.e. letters that don't require motion to sign.
+Only static letters can be recognizes, i.e. letters that don't require motion to sign. These are letters A-I and K-Y.
 
 ## Documentation
 
