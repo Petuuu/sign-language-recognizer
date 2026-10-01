@@ -63,18 +63,11 @@ Duck.ai (GPT-5.6 Luna) used to correct isolated syntax errors and help identify 
 
 ## Final sources
 
--> MediaPipe hand landmarker: https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker
-
--> Sign Language MNIST dataset (alphabet same in ASL and Finnish): https://www.kaggle.com/datasets/datamunge/sign-language-mnist
-
--> MLP geeksforgeeks (GFG): https://www.geeksforgeeks.org/deep-learning/multi-layer-perceptron-learning-in-tensorflow/
-
--> Adam GFG: https://www.geeksforgeeks.org/deep-learning/adam-optimizer/
-
--> Backpropagation GFG (Python implementation not viewed or used): https://www.geeksforgeeks.org/machine-learning/backpropagation-in-neural-network/
-
--> Softmax and loss GFG: https://www.geeksforgeeks.org/machine-learning/derivative-of-the-softmax-function-and-the-categorical-cross-entropy-loss/
-
--> Tests for neural networks: https://www.sebastianbjorkqvist.com/blog/writing-automated-tests-for-neural-networks/
-
--> Weight initialization techniques: https://medium.com/@piyushkashyap045/understanding-weight-initialization-techniques-in-neural-networks-582e80a1e839
+- [MediaPipe hand landmarker](https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker)
+- [Sign Language MNIST dataset](https://www.kaggle.com/datasets/datamunge/sign-language-mnist)
+- [MLP geeksforgeeks (GFG)](https://www.geeksforgeeks.org/deep-learning/multi-layer-perceptron-learning-in-tensorflow/)
+- [Adam GFG](https://www.geeksforgeeks.org/deep-learning/adam-optimizer/)
+- [Backpropagation GFG](https://www.geeksforgeeks.org/machine-learning/backpropagation-in-neural-network/) (Python implementation not viewed or used)
+- [Softmax and loss GFG](https://www.geeksforgeeks.org/machine-learning/derivative-of-the-softmax-function-and-the-categorical-cross-entropy-loss/)
+- [Tests for neural networks](https://www.sebastianbjorkqvist.com/blog/writing-automated-tests-for-neural-networks/)
+- [Weight initialization techniques](https://medium.com/@piyushkashyap045/understanding-weight-initialization-techniques-in-neural-networks-582e80a1e839)

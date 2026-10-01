@@ -28,19 +28,19 @@
 
 - **Sources:**
 
--> MediaPipe hand landmarker: https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker
+-> [MediaPipe hand landmarker](https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker)
 
--> NumPy docs: https://numpy.org/doc/stable/
+-> [NumPy docs](https://numpy.org/doc/stable/)
 
--> Sign Language MNIST dataset (alphabet same in ASL and Finnish): https://www.kaggle.com/datasets/datamunge/sign-language-mnist
+-> [Sign Language MNIST dataset](https://www.kaggle.com/datasets/datamunge/sign-language-mnist)
 
--> MLP geeksforgeeks (GFG): https://www.geeksforgeeks.org/deep-learning/multi-layer-perceptron-learning-in-tensorflow/
+-> [MLP geeksforgeeks (GFG)](https://www.geeksforgeeks.org/deep-learning/multi-layer-perceptron-learning-in-tensorflow/)
 
--> Adam GFG: https://www.geeksforgeeks.org/deep-learning/adam-optimizer/
+-> [Adam GFG](https://www.geeksforgeeks.org/deep-learning/adam-optimizer/)
 
--> Backpropagation GFG (Python implementation not viewed or used): https://www.geeksforgeeks.org/machine-learning/backpropagation-in-neural-network/
+-> [Backpropagation GFG](https://www.geeksforgeeks.org/machine-learning/backpropagation-in-neural-network/) (Python implementation not viewed or used)
 
-(-> GRU GFG: https://www.geeksforgeeks.org/machine-learning/gated-recurrent-unit-networks/)
+(-> [GRU GFG](https://www.geeksforgeeks.org/machine-learning/gated-recurrent-unit-networks/))
 
 
 ## Core
