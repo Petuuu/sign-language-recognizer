@@ -3,12 +3,13 @@
 | Date | Time | Topic | Description | Learned |
 |-----|------|------|--------|--------|
 | 30.9. | 1 h | peer review |||
+| 1.10 | 1 h | prerequisite functions for training | create functions to create dataset classify logits + test ||
 ||||||
 
-- **Total:** 1 h
+- **Total:** 2 h
 
 ## Report
 
-- **Progress:** none
+- **Progress:** training algorithm
 - **Uncertanties ja difficulties:**
-- **Next:** training algorithm and pretraining
+- **Next:** pretraining

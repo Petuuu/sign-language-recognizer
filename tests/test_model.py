@@ -7,11 +7,13 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from src.model.architecture import MLP, Dropout
-from src.model.helpers import relu, softmax, cross_entropy
 from src.model.train import train
+from src.model.helpers import relu, softmax, cross_entropy, create_dataset, classify
 
-SIZE = 10000000
+SIZE = 100000
 SIZE_SMALL = 10
+
+X_train, y_train, X_val, y_val = create_dataset("dataset/sample.csv")
 
 
 class TestModel(unittest.TestCase):
@@ -28,7 +30,7 @@ class TestModel(unittest.TestCase):
             nn.ReLU(),
             nn.Linear(128, 64),
             nn.ReLU(),
-            nn.Linear(64, 25),
+            nn.Linear(64, 24),
         )
 
         # Copy weights from own model to PyTorch's
@@ -88,11 +90,12 @@ class TestTraining(unittest.TestCase):
 
     def test_propagation(self):
         """Tests that loss is propagated and the weight
-        updates make the model improve"""
+        updates make the model improve by checking that the network
+        is able to overfit"""
         model = MLP()
-        train_losses, _, train_accs, _, _ = train(model)
+        train_losses, _, train_accs, _, _ = train(model, X_train, y_train, X_val, y_val)
         self.assertAlmostEqual(train_losses[-1], 0)
-        self.assertEqual(train_accs[-1], 100)
+        self.assertAlmostEqual(train_accs[-1], 100)
 
     def test_gradients(self):
         """Tests that gradients are non-zero and loss decreases"""
@@ -154,7 +157,7 @@ class TestMethods(unittest.TestCase):
         np.testing.assert_allclose(own, correct.numpy())
 
     def test_relu(self):
-        """Tests ReLU activatio function with large input"""
+        """Tests ReLU activation function with large input"""
         x = np.random.rand(SIZE) - 1 / 2
 
         start = time()
@@ -169,7 +172,7 @@ class TestMethods(unittest.TestCase):
         np.testing.assert_allclose(own, correct.numpy())
 
     def test_softmax_small(self):
-        """Test Softmax activation fuction with small input"""
+        """Tests foftmax activation fuction with small input"""
         x = np.random.rand(SIZE_SMALL)
 
         start = time()
@@ -184,7 +187,7 @@ class TestMethods(unittest.TestCase):
         np.testing.assert_allclose(own, correct.numpy())
 
     def test_softmax(self):
-        """Test Softmax activation fuction with large input"""
+        """Tests softmax activation fuction with large input"""
         x = np.random.rand(SIZE)
 
         start = time()
@@ -197,3 +200,18 @@ class TestMethods(unittest.TestCase):
         end = time()
         print(f"PyTorch time: {end - start} s")
         np.testing.assert_allclose(own, correct.numpy())
+
+    def test_create_dataset(self):
+        """Tests that dataset is prepared correctly"""
+        self.assertEqual(X_train.shape, (16, 61))
+        self.assertEqual(y_train.shape, (16,))
+        self.assertEqual(X_val.shape, (5, 61))
+        self.assertEqual(y_val.shape, (5,))
+
+    def test_classification(self):
+        """Tests that logits are correctly classified into labels"""
+        x = np.array([10, 0.1, 0.1, 0.1])
+        y = np.array([1, 1, 1, 1])
+
+        self.assertEqual(classify(x), 1)
+        self.assertEqual(classify(y), 0)

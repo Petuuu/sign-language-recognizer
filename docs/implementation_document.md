@@ -55,7 +55,7 @@ The program can't recognize letters that require motion (J, Z, Ä, Ö, Å). This
 
 ## Performance of methods
 
-Performance of model tested against PyTorch equivalents with n=10^8. Data propagations is slightly faster in own model than PyTorch's, but cross-entropy computation was ~9x slower (0.66s -> 5.37s) and softmax almost 2x (0.68s -> 1.20s).
+Performance of model tested against PyTorch equivalents with n=10^8. Data propagations is slightly faster in own model than PyTorch's, but cross-entropy computation was ~9x slower (0.66s -> 5.37s) and softmax almost 2x (0.68s -> 1.20s). In practice, however, this doesn't make a significant difference, as both functions take inputs of size n=24.
 
 ## LLM usage
 

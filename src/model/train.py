@@ -2,14 +2,23 @@
 
 import numpy as np
 from src.model.architecture import MLP
+from src.model.helpers import create_dataset, classify
 
 
-def train(model: MLP) -> tuple:
+def train(
+    model: MLP,
+    X_train: np.ndarray,
+    y_train: np.ndarray,
+    X_val: np.ndarray,
+    y_val: np.ndarray,
+    epochs: int = 5,
+) -> tuple:
     """Backpropagation training loop
 
     Args:
-        model (MLP): model to be trained
-        ...
+        model    (MLP): model to be trained
+        X (np.ndarray): landmarks
+        epochs   (int): how many times the dataset is iterated. Defaults to 5
 
     Returns:
         (tuple):

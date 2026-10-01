@@ -1,5 +1,7 @@
 """Model helper methods"""
 
+import os
+import sys
 import numpy as np
 
 
@@ -60,3 +62,53 @@ def cross_entropy(logits: np.ndarray, label: int) -> tuple[float, np.ndarray]:
     grad[label] -= 1
 
     return loss, grad
+
+
+def create_dataset(
+    path: str, train_ratio: float = 0.8
+) -> tuple[np.ndarray, np.ndarray]:
+    """Extracts all landmarks and handedness as X and corresponding labels as y
+
+    Args:
+        path (str): path to CSV dataset file
+
+    Returns:
+        X_train (np.ndarray): 2d tensor containing landmarks and handedness for training
+        y_train (np.ndarray): 1d tensor containing correct labels for training
+        X_val   (np.ndarray): 2d tensor containing landmarks and handedness for validation
+        y_val   (np.ndarray): 1d tensor containing correct labels for validation
+    """
+    if not os.path.exists(path):
+        print("Incorrect path. Exiting...")
+        sys.exit()
+
+    X, y = [], []
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            clean = line.strip().split(",")
+            X.append(clean[1:])
+            y.append(clean[0])
+
+    train_portion = int(train_ratio * len(y))
+    X_train = np.array(X[:train_portion])
+    y_train = np.array(y[:train_portion])
+    X_val = np.array(X[train_portion:])
+    y_val = np.array(y[train_portion:])
+
+    return X_train, y_train, X_val, y_val
+
+
+def classify(logits: np.ndarray) -> int:
+    """Select most probable letter (index, label) from model output logits.
+    If probability is less than 0.X, return 0 (unknown)
+
+    Args:
+        logits (np.ndarray): model output tensor
+
+    Returns:
+        (int): most probable letter (label)
+    """
+    probas = softmax(logits)
+    idx = np.argmax(logits)
+
+    return idx + 1 if probas[idx] > 0.5 else 0
