@@ -4,9 +4,10 @@
 |-----|------|------|--------|--------|
 | 30.9. | 1 h | peer review |||
 | 1.10 | 1 h | prerequisite functions for training | create functions to create dataset classify logits + test ||
+|| 1 h | training | start creating training algorithm ||
 ||||||
 
-- **Total:** 2 h
+- **Total:** 3 h
 
 ## Report
 

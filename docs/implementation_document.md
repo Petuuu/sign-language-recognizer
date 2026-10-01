@@ -2,7 +2,7 @@
 
 ```
 sign-language-recognizer/
-├── documentation/
+├── docs/
 |   ├── weekly_progress/
 |   |   ├── week_1.md
 |   |   ...
@@ -25,8 +25,10 @@ sign-language-recognizer/
 |   └── main.py
 ├── tests/
 |   ├── __init__.py
-|   ├── test_model.py
-|   └── test_image_pipeline.py
+|   ├── test_architectures.py
+|   ├── test_helpers.py
+|   ├── test_image_pipeline.py
+|   └── test_training.py
 ├── .coverage
 ├── .coveragerc
 ├── .gitignore
@@ -46,7 +48,6 @@ sign-language-recognizer/
 - `models/`: machine learning models related to project
 - `src/model/`: building and training implemented machine learning model
 - `src/image_pipeline.py`: image and video processing and landmarking
-- `src/main.py`: main program
 - `dataset.zip`: images used in project
 
 ## Possible flaws and improvements

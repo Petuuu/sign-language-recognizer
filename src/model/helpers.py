@@ -112,3 +112,7 @@ def classify(logits: np.ndarray) -> int:
     idx = np.argmax(logits)
 
     return idx + 1 if probas[idx] > 0.5 else 0
+
+
+def adam():
+    """Adam optimizer for training algorithm"""
