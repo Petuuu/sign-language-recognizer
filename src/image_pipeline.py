@@ -14,10 +14,7 @@ from mediapipe.tasks.python.vision.hand_landmarker import (
 )
 import cv2 as cv
 
-BASE_OPTIONS = mp.tasks.BaseOptions(
-    model_asset_path="models/hand_landmarker.task",
-    delegate=mp.tasks.BaseOptions.Delegate.CPU,
-)
+BASE_OPTIONS = mp.tasks.BaseOptions(model_asset_path="models/hand_landmarker.task")
 LETTER_TO_LABEL = {
     "UNK": 0,
     "A": 1,
