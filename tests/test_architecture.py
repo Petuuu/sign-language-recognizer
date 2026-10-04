@@ -5,10 +5,8 @@ from time import time
 import numpy as np
 import torch
 from torch import nn
-import torch.nn.functional as F
 from src.model.architecture import MLP, Dropout
-from src.model.train import train
-from src.model.helpers import relu, softmax, cross_entropy, create_dataset, classify
+from src.model.helpers import create_dataset
 
 SIZE = 100000
 SIZE_SMALL = 10
