@@ -24,7 +24,7 @@ Only static letters can be recognizes, i.e. letters that don't require motion to
 
 # Usage
 
-First, clone the repository, navigate to the project, and unzip the dataset. Then, create the virtual environment with
+First, clone the repository, navigate to the project, and unzip `dataset.zip` to access the dataset used for training. Then, create the virtual environment with
 ```bash
 poetry install
 ```

@@ -82,7 +82,7 @@ def normalize_landmarks(landmarks: list[NormalizedLandmark]) -> list:
     Returns:
         points (np.ndarray): normalized landmarks excluding wrist
     """
-    points = np.array([[lm.x, lm.y, lm.x] for lm in landmarks], dtype=np.float64)
+    points = np.array([[lm.x, lm.y, lm.z] for lm in landmarks], dtype=np.float64)
 
     # points[0] is the landmark for the wrist
     points -= points[0]
