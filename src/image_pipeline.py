@@ -161,47 +161,53 @@ def landmarks_to_csv(path: str, output_path: str = "dataset/landmarks.csv") -> N
         base_options=BASE_OPTIONS, num_hands=2, running_mode=vision.RunningMode.IMAGE
     )
     with vision.HandLandmarker.create_from_options(options) as detector:
-        with open(output_path, "w", encoding="utf-8") as f:
-            if os.path.isdir(path):
-                for file in path.rglob("*"):
-                    if file.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
-                        continue
+        try:
+            with open(output_path, "w", encoding="utf-8") as f:
+                if os.path.isdir(path):
+                    for file in path.rglob("*"):
+                        if file.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
+                            continue
 
-                    # OpenCV uses BGR for images, while MediaPipe uses RGB
-                    # -> colors need to be converted
-                    img = cv.imread(str(file))
+                        # OpenCV uses BGR for images, while MediaPipe uses RGB
+                        # -> colors need to be converted
+                        img = cv.imread(str(file))
+                        as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+                        mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
+                        res = detector.detect(mp_img)
+
+                        # format result and save to file
+                        if len(res.hand_landmarks) > 1:
+                            raise ValueError(
+                                "Only one hand allowed in a single picture"
+                            )
+                        label = LETTER_TO_LABEL[file.stem[0].upper()]
+                        handedness = res.handedness[0][0].index
+                        normalized = ",".join(
+                            [str(x) for x in normalize_landmarks(res.hand_landmarks[0])]
+                        )
+                        f.write(f"{label},{handedness},{normalized}\n")
+
+                else:
+                    if path.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
+                        print("Given file is not an image. Exiting...")
+                        sys.exit()
+
+                    img = cv.imread(str(path))
                     as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
                     mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
                     res = detector.detect(mp_img)
 
-                    # format result and save to file
                     if len(res.hand_landmarks) > 1:
                         raise ValueError("Only one hand allowed in a single picture")
-                    label = LETTER_TO_LABEL[file.stem[0].upper()]
+                    label = LETTER_TO_LABEL[path.stem[0].upper()]
                     handedness = res.handedness[0][0].index
                     normalized = ",".join(
                         [str(x) for x in normalize_landmarks(res.hand_landmarks[0])]
                     )
                     f.write(f"{label},{handedness},{normalized}\n")
 
-            else:
-                if path.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
-                    print("Given file is not an image. Exiting...")
-                    sys.exit()
-
-                img = cv.imread(str(path))
-                as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-                mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
-                res = detector.detect(mp_img)
-
-                if len(res.hand_landmarks) > 1:
-                    raise ValueError("Only one hand allowed in a single picture")
-                label = LETTER_TO_LABEL[path.stem[0].upper()]
-                handedness = res.handedness[0][0].index
-                normalized = ",".join(
-                    [str(x) for x in normalize_landmarks(res.hand_landmarks[0])]
-                )
-                f.write(f"{label},{handedness},{normalized}\n")
+        except:
+            print(f"File '{output_path}' not found or could not be opened. Exiting...")
 
 
 def image_detect(path: str) -> None:

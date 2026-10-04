@@ -181,7 +181,7 @@ if __name__ == "__main__":
         "Save unnormalized landmarks from images (0) or check extracted unnormalized landmarks (1, default)? "
     )
     if n == "0":
-        landmarks_to_csv(Path("dataset/sample/"))
+        landmarks_to_csv(Path("dataset/sample/"), Path("dataset/unnormalized.csv"))
     elif n in ("1", ""):
         draw_extracted_landmarks(Path("dataset/unnormalized.csv"))
     else:

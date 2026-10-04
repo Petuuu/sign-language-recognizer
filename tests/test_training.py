@@ -1,7 +1,6 @@
 """Tests for model training algorithm"""
 
 import unittest
-from time import time
 import numpy as np
 import torch
 from torch import nn
@@ -23,9 +22,7 @@ class TestTraining(unittest.TestCase):
         is able to overfit"""
         model = MLP()
         X_train, y_train, X_val, y_val = create_dataset("dataset/sample.csv")
-        train_losses, _, train_accs, _ = train(
-            model, (X_train, y_train), (X_val, y_val)
-        )
+        train_losses, _, train_accs, _ = train(model, X_train, y_train, X_val, y_val)
         self.assertAlmostEqual(train_losses[-1], 0)
         self.assertAlmostEqual(train_accs[-1], 100)
 
