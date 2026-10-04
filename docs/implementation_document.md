@@ -25,6 +25,7 @@ sign-language-recognizer/
 |   └── main.py
 ├── tests/
 |   ├── __init__.py
+|   ├── check_extracted_landmarks.py
 |   ├── test_architectures.py
 |   ├── test_helpers.py
 |   ├── test_image_pipeline.py

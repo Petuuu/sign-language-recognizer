@@ -2,12 +2,13 @@
 
 | Date | Time | Topic | Description | Learned |
 |-----|------|------|--------|--------|
+| 4.10. | 1 h | tests | write script to ensure that extracted landmarks are correct ||
 ||||||
 
-- **Total:** n h
+- **Total:** 1 h
 
 ## Report
 
-- **Progress:**
+- **Progress:** ensure that extracted landmarks are correct, finish training algorithm, and pretrain
 - **Uncertanties ja difficulties:**
-- **Next:**
+- **Next:** minor tweaks + finalization of documentation
