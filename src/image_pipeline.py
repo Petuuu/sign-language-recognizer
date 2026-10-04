@@ -72,7 +72,7 @@ LABEL_TO_LETTER = {
 HANDEDNESS_INDEX_TO_NAME = {0: "Right", 1: "Left"}
 
 
-def normalize_landmarks(landmarks: list[NormalizedLandmark]) -> list:
+def normalize_landmarks(landmarks: list[NormalizedLandmark]) -> list[float]:
     """Center landmarks at the wrist and normalize their scale using the distance
     between the wrist and the middle finger's MCP joint
 
