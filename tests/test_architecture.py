@@ -20,11 +20,11 @@ class TestModel(unittest.TestCase):
     def test_architecture(self):
         """Tests that data passes through the model and is backpropagated correctly"""
         # Init
-        x_np = np.random.rand(63)
+        x_np = np.random.rand(61)
         x_torch = torch.tensor(x_np, dtype=torch.float32, requires_grad=True)
         model = MLP()
         torch_model = nn.Sequential(
-            nn.Linear(63, 128),
+            nn.Linear(61, 128),
             nn.ReLU(),
             nn.Linear(128, 64),
             nn.ReLU(),

@@ -3,7 +3,7 @@
 import numpy as np
 from src.model.helpers import relu, relu_derivative
 
-NUM_LANDMARKS = 63  # 21 × (x, y, z)
+NUM_INPUTS = 61  # handedness + 21 × (x, y, z) - wrist
 NUM_CLASSES = 24  # letters A-I and K-Y
 LEARNING_RATE = 0.01
 
@@ -21,7 +21,7 @@ class MLP:
 
     def __init__(
         self,
-        input_size: int = NUM_LANDMARKS,
+        input_size: int = NUM_INPUTS,
         hidden_sizes: tuple[int, int] = (128, 64),
         output_size: int = NUM_CLASSES,
         lr: float = LEARNING_RATE,
