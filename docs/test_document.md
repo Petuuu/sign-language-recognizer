@@ -17,22 +17,33 @@ TOTAL                          92      3      8      3    94%
 ## Test structure
 
 ```
-test_model.py
-├── TestModel
-|   ├── test_architecture
-|   ├── test_dropout
-|   └── test_error_checking
-├── TestTraining
-|   ├── test_propagation
-|   ├── test_gradients
-|   └── test_layers_change
-└── TestMethods
-    ├── test_cross_entropy_small
-    ├── test_cross_entropy
-    ├── test_relu_small
-    ├── test_relu
-    ├── test_softmax_small
-    └── test_softmax
+sign-language-recognizer/
+├── test_architecture.py
+|   └── TestModel
+|       ├── test_architecture
+|       ├── test_dropout
+|       └── test_error_checking
+|
+├── test_helpers.py
+|   └── TestMethods
+|       ├── test_cross_entropy_small
+|       ├── test_cross_entropy
+|       ├── test_relu_small
+|       ├── test_relu
+|       ├── test_softmax_small
+|       ├── test_softmax
+|       ├── test_create_dataset
+|       └── test_classification
+|
+├── test_image_pipeline.py
+|   └── TestPipeline
+|       └── test_normalization
+|
+└── test_training.py
+    └── TestTraining
+        ├── test_propagation
+        ├── test_gradients
+        └── test_layers_change
 ```
 
 ### TestModel
@@ -42,6 +53,16 @@ Ensures that the implemented model's architecture is correct with the following 
 - `test_dropout`: the dropout layer functions correctly
 - `test_error_checking`: invalid inputs and propagation orders are accounted for
 
+### TestMethods
+
+- Ensures that implemented mathematical functions (cross entropy loss, ReLU, softmax) work correctly and tests performance against PyTorch's implementations using inputs of size n=10 (functionality) and n=10^8 (performance)
+- `test_create_dataset`
+- `test_classification`
+
+### TestPipeline
+
+- `test_normalization`
+
 ### TestTraining
 
 Tests that the training loop correctly trains the model with the following tests:
@@ -49,35 +70,31 @@ Tests that the training loop correctly trains the model with the following tests
 - `test_gradients`: gradients are non_zero and loss decreases
 - `test_layers_change`: all model layers update after each optimizer step
 
-### TestMethods
-
-Ensures that implemented mathematical functions (cross entropy loss, ReLU, softmax) work correctly and tests performance against PyTorch's implementations using inputs of size n=10 (functionality) and n=10^8 (performance)
-
 ## Test reproducibility
 
 All tests can be run from the project root directory with
 ```bash
-pytest
+poetry run pytest
 ```
 
 Individual test file can be run with
 ```bash
-pytest src/tests/test_*NAME*.py
+poetry run pytest tests/test_*NAME*.py
 ```
 
 Individual test groups can by run with
 ```bash
-pytest src/tests/test_*NAME*.py::*CLASS_NAME*
+poetry run pytest tests/test_*NAME*.py::*CLASS_NAME*
 ```
 
 Individual tests can be run with
 ```bash
-pytest src/tests/test_*NAME*.py::*CLASS_NAME*::*METHOD_NAME*
+poetry run pytest tests/test_*NAME*.py::*CLASS_NAME*::*METHOD_NAME*
 ```
 
 The coverage report can be composed with
 ```bash
-coverage run --branch -m pytest
+poetry run coverage run --branch -m pytest
 ```
 
-The report can then be displayed with `coverage report -m` or `coverage html`.
+The report can then be displayed with `poetry run coverage report -m` or `poetry run coverage html`.
