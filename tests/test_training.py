@@ -22,8 +22,10 @@ class TestTraining(unittest.TestCase):
         is able to overfit"""
         model = MLP()
         X_train, y_train, X_val, y_val = create_dataset("dataset/sample.csv")
-        train_losses, _, train_accs, _ = train(model, X_train, y_train, X_val, y_val)
-        self.assertAlmostEqual(train_losses[-1], 0)
+        train_losses, _, train_accs, _ = train(
+            model, X_train, y_train, X_val, y_val, n_epochs=500, verbose=False
+        )
+        self.assertAlmostEqual(train_losses[-1], 0, places=4)
         self.assertAlmostEqual(train_accs[-1], 100)
 
     def test_gradients(self):

@@ -78,6 +78,21 @@ class MLP:
 
         return grad
 
+    def to_dict(self) -> dict[str, list[float]]:
+        """Return model weights and biases in a JSON-serializable format.
+
+        Returns:
+            (dict[str, list[float]]): model weights and biases as a dict
+        """
+        return {
+            "dense_1_weights": self.dense_1.weights.tolist(),
+            "dense_1_biases": self.dense_1.biases.tolist(),
+            "dense_2_weights": self.dense_2.weights.tolist(),
+            "dense_2_biases": self.dense_2.biases.tolist(),
+            "dense_3_weights": self.dense_3.weights.tolist(),
+            "dense_3_biases": self.dense_3.biases.tolist(),
+        }
+
     def __call__(self, x: np.ndarray, training: bool = False) -> np.ndarray:
         """Apply forward pass on function call"""
         return self.forward(x, training)

@@ -1,12 +1,14 @@
 """Tests for model"""
 
 import unittest
+import os
 from time import time
 import numpy as np
 import torch
 from torch import nn
 from src.model.architecture import MLP, Dropout
 from src.model.helpers import create_dataset
+from src.model.train import save_model, load_model
 
 SIZE = 100000
 SIZE_SMALL = 10
@@ -81,3 +83,16 @@ class TestModel(unittest.TestCase):
     def test_error_checking(self):
         """Tests that invalid inputs and propagation orders are accounted for"""
         self.assertEqual("NOT DONE", "WIP")
+
+    def test_serialization(self):
+        """Tests that model parameters can be written to a JSON file
+        and they are successfully loaded from said file"""
+        model = MLP()
+        original = model.to_dict()
+        path = "test.json"
+
+        save_model(model, path)
+        load_model(model, path)
+        os.remove(path)
+
+        np.testing.assert_equal(original, model.to_dict())

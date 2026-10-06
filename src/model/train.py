@@ -2,6 +2,7 @@
 
 import os
 import sys
+import json
 import numpy as np
 import matplotlib.pyplot as plt
 from src.model.architecture import MLP
@@ -16,6 +17,7 @@ def train(
     y_val: np.ndarray,
     n_epochs: int = 5,
     eval_freq: int = 100,
+    verbose: bool = True,
 ) -> tuple[list[int], list[int], list[int], list[int]]:
     """Backpropagation training loop
 
@@ -26,7 +28,9 @@ def train(
         X_val   (np.ndarray): landmarks and handedness for validation
         y_val   (np.ndarray): correct labels for validation
         n_epochs       (int): how many times the dataset is iterated. Defaults to 5
-        eval_freq      (int): how many training iterations until model evaluated. Defaults to 5
+        eval_freq      (int): how many training iterations until model evaluated.
+                              Put value to 0 to disable evaluation. Defaults to 5
+        verbose       (bool): are evaluation results printed
 
     Returns:
         (tuple):
@@ -45,7 +49,7 @@ def train(
             model.backward(grad)
             step += 1
 
-            if step % eval_freq == 0:
+            if eval_freq != 0 and step % eval_freq == 0:
                 # training stats
                 train_losses.append(loss)
 
@@ -73,39 +77,39 @@ def train(
                 )
                 val_accs.append(val_acc)
 
-                print(
-                    f"{f'epoch {epoch + 1:03d} (step {step:05d})':<23} | "
-                    f"{f'train_loss={loss:.3f}':<16} | {f'train_acc={train_acc:.3f}':<16} | "
-                    f"{f'val_loss={val_loss:.3f}':<16} | {f'val_acc={val_acc:.3f}':<16}"
-                )
+                if verbose:
+                    print(
+                        f"{f'epoch {epoch + 1:03d} (step {step:05d})':<23} | "
+                        f"{f'train_loss={loss:.3f}':<16} | {f'train_acc={train_acc:.3f}':<16} | "
+                        f"{f'val_loss={val_loss:.3f}':<16} | {f'val_acc={val_acc:.3f}':<16}"
+                    )
 
     return train_losses, val_losses, train_accs, val_accs
 
 
 def plot_training(
-    output_path: str,
     train_losses: list[float],
     val_losses: list[float],
     train_accs: list[float],
     val_accs: list[float],
+    output_path: str = "model_results/pretraining.png",
 ) -> None:
     """Plots pretraining losses and accuracies and saves plot to given PNG file
 
     Args:
-        output_path          (str): Path to which the plot is to be saved. Must be PNG or JPG
         train_losses (list[float]): training losses of each iteration
         val_losses   (list[float]): validation losses of each iteration
         train_accs   (list[float]): training classification accurary of each iteration
         val_accs     (list[float]): validation classification accurary of each iteration
+        output_path          (str): Path to which the plot is to be saved. Must be PNG or JPG
     """
-    if output_path[-4:] != ".png":
+    if len(output_path) < 5 or output_path[-4:] != ".png":
         print("File must be PNG or JPG")
         sys.exit()
     if os.path.exists(output_path):
         confirm = input("File already exists. Overide? [Y/n] ")
         if confirm not in ("Y", "y"):
-            print("Exiting...")
-            sys.exit()
+            return
 
     epochs = range(1, len(train_losses) + 1)
     if not (len(train_losses) == len(val_losses) == len(train_accs) == len(val_accs)):
@@ -134,12 +138,64 @@ def plot_training(
         fig.savefig(output_path)
         plt.close(fig)
     except:
+        print(f"File '{output_path}' not found or could not be opened. Returning...")
+
+
+def save_model(model: MLP, output_path: str = "models/model.json") -> None:
+    """Saves model paramaters (weights and biases) into JSON file
+
+    Args:
+        model       (MLP): model whose parameters are to be saved
+        output_path (str): Path to which the parameters are to be saved. Must be JSON.
+                           Defaults to "models/model.json"
+    """
+    if len(output_path) < 6 or output_path[-5:] != ".json":
+        print("File must be JSON. Returning...")
+        return
+    if os.path.exists(output_path):
+        confirm = input("File already exists. Overide? [Y/n] ")
+        if confirm not in ("Y", "y"):
+            print("Returning...")
+            return
+
+    try:
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(json.dumps(model.to_dict()))
+
+    except:
         print(f"File '{output_path}' not found or could not be opened. Exiting...")
+
+
+def load_model(model: MLP, path: str = "models/model.json") -> None:
+    """Loads paramaters (weights and biases) into model from JSON file
+
+    Args:
+        model (MLP): model to which the parameters are to be loaded into
+        path  (str): Path from which the parameters are to be loaded. Must be JSON.
+                     Defaults to "models/model.json"
+    """
+    if not os.path.exists(path):
+        confirm = input("File does not exist.")
+        if confirm not in ("Y", "y"):
+            print("Returning...")
+            return
+    if len(path) < 6 or path[-5:] != ".json":
+        print("File must be JSON. Returning...")
+        return
+
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(json.dumps(model.to_dict()))
+
+    except:
+        print(f"File '{path}' could not be opened. Returning...")
 
 
 if __name__ == "__main__":
     model = MLP()
     X_train, y_train, X_val, y_val = create_dataset("dataset/landmarks.csv")
-    plot_training(
-        "model_results/pretraining.png", *train(model, X_train, y_train, X_val, y_val)
-    )
+    res = train(model, X_train, y_train, X_val, y_val)
+    print("\nPlotting...")
+    plot_training(*res)
+    print("\nSaving...")
+    save_model(model, "models/no_optimizer_or_batching.json")
