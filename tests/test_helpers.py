@@ -121,5 +121,5 @@ class TestMethods(unittest.TestCase):
         x = np.array([10, 0.1, 0.1, 0.1])
         y = np.array([1, 1, 1, 1])
 
-        self.assertEqual(classify(x), 1)
-        self.assertEqual(classify(y), 0)
+        self.assertEqual(classify(x)[1], 1)
+        self.assertEqual(classify(y)[1], 0)

@@ -28,7 +28,7 @@ def train(
         y_val   (np.ndarray): correct labels for validation
         n_epochs       (int): how many times the dataset is iterated. Defaults to 5
         eval_freq      (int): how many training iterations until model evaluated.
-                              Put value to 0 to disable evaluation. Defaults to 5
+                              Set value to 0 to disable evaluation. Defaults to 5
         verbose       (bool): are evaluation results printed
 
     Returns:
@@ -54,7 +54,7 @@ def train(
 
                 train_acc = 100 * np.mean(
                     [
-                        classify(model.forward(x.astype(float))) == int(label)
+                        classify(model.forward(x.astype(float)))[1] == int(label)
                         for x, label in zip(X_train, y_train)
                     ]
                 )
@@ -70,7 +70,7 @@ def train(
 
                 val_acc = 100 * np.mean(
                     [
-                        classify(model.forward(sample.astype(float))) == int(label)
+                        classify(model.forward(sample.astype(float)))[1] == int(label)
                         for sample, label in zip(X_val, y_val)
                     ]
                 )
@@ -145,6 +145,6 @@ if __name__ == "__main__":
     X_train, y_train, X_val, y_val = create_dataset("dataset/landmarks.csv")
     res = train(model, X_train, y_train, X_val, y_val)
     print("\nPlotting...")
-    plot_training(*res)
+    plot_training(*res, "model_results/no_optimizer_or_batching/pretraining.png")
     print("\nSaving...")
     save_model(model, "models/no_optimizer_or_batching.json")

@@ -98,20 +98,22 @@ def create_dataset(
     return X_train, y_train, X_val, y_val
 
 
-def classify(logits: np.ndarray) -> int:
+def classify(logits: np.ndarray) -> tuple[list[float], int]:
     """Select most probable letter (index, label) from model output logits.
-    If probability is less than 0.X, return 0 (unknown)
+    If probability is less than 0.4, return 0 (unknown)
 
     Args:
         logits (np.ndarray): model output tensor
 
     Returns:
-        (int): most probable letter (label)
+        (tuple):
+            probas (list[float]): proabilities of each class
+            (int): most probable letter (label)
     """
     probas = softmax(logits)
     idx = np.argmax(logits)
 
-    return idx + 1 if probas[idx] > 0.5 else 0
+    return probas, idx + 1 if probas[idx] > 0.4 else 0
 
 
 def adam():
