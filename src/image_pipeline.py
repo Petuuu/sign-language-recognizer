@@ -115,6 +115,9 @@ def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
     mp_drawing = vision.drawing_utils
     mp_drawing_styles = vision.drawing_styles
     annotated = np.copy(img)
+    if not res.hand_landmarks:
+        return annotated
+
     landmarks = res.hand_landmarks[0]
 
     mp_drawing.draw_landmarks(
@@ -236,11 +239,12 @@ def image_detect(path: str) -> None:
                 mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
                 res = detector.detect(mp_img)
 
-                landmarks = normalize_landmarks(res.hand_landmarks[0])
-                model_input = np.array([res.handedness[0][0].index, *landmarks])
-                probas, pred = classify(model(model_input))
-                print("\nPROBABILITIES:\n", probas)
-                print("PREDICTION:", LABEL_TO_LETTER[pred])
+                if res.hand_landmarks:
+                    landmarks = normalize_landmarks(res.hand_landmarks[0])
+                    model_input = np.array([res.handedness[0][0].index, *landmarks])
+                    probas, pred = classify(model(model_input))
+                    print("\nPROBABILITIES:\n", probas)
+                    print("PREDICTION:", LABEL_TO_LETTER[pred])
 
                 annotated = draw_landmarks(mp_img.numpy_view(), res)
                 as_bgr = cv.cvtColor(annotated, cv.COLOR_RGB2BGR)
@@ -258,11 +262,12 @@ def image_detect(path: str) -> None:
             mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
             res = detector.detect(mp_img)
 
-            landmarks = normalize_landmarks(res.hand_landmarks[0])
-            model_input = np.array([res.handedness[0][0].index, *landmarks])
-            probas, pred = classify(model(model_input))
-            print("\nPROBABILITIES:\n", probas)
-            print("PREDICTION:", LABEL_TO_LETTER[pred])
+            if res.hand_landmarks:
+                landmarks = normalize_landmarks(res.hand_landmarks[0])
+                model_input = np.array([res.handedness[0][0].index, *landmarks])
+                probas, pred = classify(model(model_input))
+                print("\nPROBABILITIES:\n", probas)
+                print("PREDICTION:", LABEL_TO_LETTER[pred])
 
             annotated = draw_landmarks(mp_img.numpy_view(), res)
             as_bgr = cv.cvtColor(annotated, cv.COLOR_RGB2BGR)
@@ -273,6 +278,9 @@ def image_detect(path: str) -> None:
 
 def stream_detect() -> None:
     """Detect landmarks from video stream and display them"""
+    model = MLP()
+    load_model(model, MODEL_PATH)
+
     options = vision.HandLandmarkerOptions(
         base_options=BASE_OPTIONS, num_hands=1, running_mode=vision.RunningMode.VIDEO
     )
@@ -294,8 +302,13 @@ def stream_detect() -> None:
             mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
             timestamp_ms = time.monotonic_ns() // 1000000
             res = detector.detect_for_video(mp_img, timestamp_ms)
+
             if res.hand_landmarks:
-                print(res)
+                landmarks = normalize_landmarks(res.hand_landmarks[0])
+                model_input = np.array([res.handedness[0][0].index, *landmarks])
+                probas, pred = classify(model(model_input))
+                print("\nPROBABILITIES:\n", probas)
+                print("PREDICTION:", LABEL_TO_LETTER[pred])
 
             annotated = draw_landmarks(mp_img.numpy_view(), res)
             as_bgr = cv.cvtColor(annotated, cv.COLOR_RGB2BGR)
