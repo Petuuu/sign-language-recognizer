@@ -2,10 +2,9 @@
 
 import os
 import sys
-import json
 import numpy as np
 import matplotlib.pyplot as plt
-from src.model.architecture import MLP
+from src.model.architecture import MLP, save_model
 from src.model.helpers import create_dataset, classify, cross_entropy, adam
 
 
@@ -139,56 +138,6 @@ def plot_training(
         plt.close(fig)
     except:
         print(f"File '{output_path}' not found or could not be opened. Returning...")
-
-
-def save_model(model: MLP, output_path: str = "models/model.json") -> None:
-    """Saves model paramaters (weights and biases) into JSON file
-
-    Args:
-        model       (MLP): model whose parameters are to be saved
-        output_path (str): Path to which the parameters are to be saved. Must be JSON.
-                           Defaults to "models/model.json"
-    """
-    if len(output_path) < 6 or output_path[-5:] != ".json":
-        print("File must be JSON. Returning...")
-        return
-    if os.path.exists(output_path):
-        confirm = input("File already exists. Overide? [Y/n] ")
-        if confirm not in ("Y", "y"):
-            print("Returning...")
-            return
-
-    try:
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(json.dumps(model.to_dict()))
-
-    except:
-        print(f"File '{output_path}' not found or could not be opened. Exiting...")
-
-
-def load_model(model: MLP, path: str = "models/model.json") -> None:
-    """Loads paramaters (weights and biases) into model from JSON file
-
-    Args:
-        model (MLP): model to which the parameters are to be loaded into
-        path  (str): Path from which the parameters are to be loaded. Must be JSON.
-                     Defaults to "models/model.json"
-    """
-    if not os.path.exists(path):
-        confirm = input("File does not exist.")
-        if confirm not in ("Y", "y"):
-            print("Returning...")
-            return
-    if len(path) < 6 or path[-5:] != ".json":
-        print("File must be JSON. Returning...")
-        return
-
-    try:
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(json.dumps(model.to_dict()))
-
-    except:
-        print(f"File '{path}' could not be opened. Returning...")
 
 
 if __name__ == "__main__":
