@@ -1,6 +1,8 @@
 """Model architecture"""
 
 import os
+import json
+import sys
 import numpy as np
 from src.model.helpers import relu, relu_derivative
 
@@ -251,8 +253,17 @@ def load_model(model: MLP, path: str = "models/model.json") -> None:
         return
 
     try:
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(json.dumps(model.to_dict()))
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                params = json.loads(line.strip())
+
+        model.dense_1.weights = np.asarray(params["dense_1_weights"])
+        model.dense_1.biases = np.asarray(params["dense_1_biases"])
+        model.dense_2.weights = np.asarray(params["dense_2_weights"])
+        model.dense_2.biases = np.asarray(params["dense_2_biases"])
+        model.dense_3.weights = np.asarray(params["dense_3_weights"])
+        model.dense_3.biases = np.asarray(params["dense_3_biases"])
 
     except:
-        print(f"File '{path}' could not be opened. Returning...")
+        print(f"File '{path}' could not be opened or incorrect content. Exiting...")
+        sys.exit()

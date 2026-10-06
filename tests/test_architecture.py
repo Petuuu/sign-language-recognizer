@@ -6,9 +6,9 @@ from time import time
 import numpy as np
 import torch
 from torch import nn
-from src.model.architecture import MLP, Dropout
+from src.model.architecture import MLP, Dropout, save_model, load_model
 from src.model.helpers import create_dataset
-from src.model.train import save_model, load_model
+from src.model.train import train
 
 SIZE = 100000
 SIZE_SMALL = 10
@@ -88,6 +88,7 @@ class TestModel(unittest.TestCase):
         """Tests that model parameters can be written to a JSON file
         and they are successfully loaded from said file"""
         model = MLP()
+        train(model, X_train, y_train, X_val, y_val, eval_freq=0, verbose=False)
         original = model.to_dict()
         path = "test.json"
 
