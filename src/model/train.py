@@ -8,6 +8,32 @@ from src.model.architecture import MLP, save_model
 from src.model.helpers import create_dataset, classify, cross_entropy, adam
 
 
+def handle_training() -> None:
+    """Handles training initialization"""
+    landmarks_path = input("Path to landmarks (default 'dataset/landmarks.csv'): ")
+    plot_path = input(
+        "Path to which plot is to be saved (default 'model_results/pretraining.png')"
+    )
+    model_path = input(
+        "Path to which model is to be saved (default 'models/model.json')"
+    )
+
+    if landmarks_path == "":
+        landmarks_path = "dataset/landmarks.csv"
+    if plot_path == "":
+        plot_path = "model_results/pretraining.png"
+    if model_path == "":
+        model_path = "models/model.json"
+
+    model = MLP()
+    X_train, y_train, X_val, y_val = create_dataset(landmarks_path)
+    res = train(model, X_train, y_train, X_val, y_val)
+    print("\nPlotting...")
+    plot_training(*res, plot_path)
+    print("\nSaving...")
+    save_model(model, model_path)
+
+
 def train(
     model: MLP,
     X_train: np.ndarray,
@@ -138,13 +164,3 @@ def plot_training(
         plt.close(fig)
     except:
         print(f"File '{output_path}' not found or could not be opened. Returning...")
-
-
-if __name__ == "__main__":
-    model = MLP()
-    X_train, y_train, X_val, y_val = create_dataset("dataset/landmarks.csv")
-    res = train(model, X_train, y_train, X_val, y_val)
-    print("\nPlotting...")
-    plot_training(*res, "model_results/no_optimizer_or_batching/pretraining.png")
-    print("\nSaving...")
-    save_model(model, "models/no_optimizer_or_batching.json")

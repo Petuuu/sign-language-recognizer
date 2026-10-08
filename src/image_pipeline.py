@@ -149,13 +149,13 @@ def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
     return annotated
 
 
-def landmarks_to_csv(path: str, output_path: str = "dataset/landmarks.csv") -> None:
+def landmarks_to_csv(path: str, output_path: str = "dataset/sample.csv") -> None:
     """Detect landmarks from images and save them to CSV file. Label is extracted from the first
     letter of image files. Image must be jpg, jpeg, or png
 
     Args:
         path (str): path to an image directory or file
-        output_path (str): path to output CSV file. Defaults to "dataset/landmarks.csv"
+        output_path (str): path to output CSV file. Defaults to "dataset/sample.csv"
     """
     if os.path.exists(output_path):
         confirm = input("File already exists. Overide? [Y/n] ")
