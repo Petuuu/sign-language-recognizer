@@ -128,24 +128,6 @@ def draw_landmarks(img: np.ndarray, res: HandLandmarkerResult) -> np.ndarray:
         mp_drawing_styles.get_default_hand_connections_style(),
     )
 
-    # Add text next to landmarks indicating handedness
-    height, width, _ = annotated.shape
-    x = [landmark.x for landmark in landmarks]
-    y = [landmark.y for landmark in landmarks]
-    text_x = int(min(x) * width)
-    text_y = int(min(y) * height)
-
-    cv.putText(
-        annotated,
-        res.handedness[0][0].category_name,
-        (text_x, text_y),
-        cv.FONT_HERSHEY_COMPLEX_SMALL,
-        1,
-        (0, 136, 255),
-        1,
-        cv.LINE_AA,
-    )
-
     return annotated
 
 
@@ -314,7 +296,7 @@ def stream_detect() -> None:
                 predict(model, res)
 
             annotated = draw_landmarks(mp_img.numpy_view(), res)
-            as_bgr = cv.cvtColor(annotated, cv.COLOR_RGB2BGR)
+            as_bgr = cv.cvtColor(cv.flip(annotated, 1), cv.COLOR_RGB2BGR)
             cv.imshow("Image", as_bgr)
             if cv.waitKey(1) == ord("q"):
                 break

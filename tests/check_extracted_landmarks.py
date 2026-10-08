@@ -135,24 +135,6 @@ def draw_landmarks(
         mp_drawing_styles.get_default_hand_connections_style(),
     )
 
-    # Add text next to landmarks indicating handedness
-    height, width, _ = annotated.shape
-    x = [landmark.x for landmark in landmarks]
-    y = [landmark.y for landmark in landmarks]
-    text_x = int(min(x) * width)
-    text_y = int(min(y) * height)
-
-    cv.putText(
-        annotated,
-        handedness,
-        (text_x, text_y),
-        cv.FONT_HERSHEY_COMPLEX_SMALL,
-        1,
-        (0, 136, 255),
-        1,
-        cv.LINE_AA,
-    )
-
     return annotated
 
 
