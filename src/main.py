@@ -34,16 +34,24 @@ def main() -> None:
         path = input(
             "Path to image file/directory from project root (default 'dataset/sample/'): "
         )
+        model_path = input("Path to model parameters (default 'models/model.json'): ")
+
         if path == "":
             path = "dataset/sample/"
+        if model_path == "":
+            model_path = "models/model.json"
 
         if os.path.exists(path):
-            image_detect(Path(path))
+            image_detect(Path(path), model_path)
         else:
             print("Incorrect path. Exiting...")
 
     elif n == "2":
-        stream_detect()
+        model_path = input("Path to model parameters (default 'models/model.json'): ")
+        if model_path == "":
+            model_path = "models/model.json"
+
+        stream_detect(model_path)
 
     elif n == "3":
         handle_training()

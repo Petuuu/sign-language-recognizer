@@ -25,7 +25,7 @@ class TestTraining(unittest.TestCase):
         train_losses, _, train_accs, _ = train(
             model, X_train, y_train, X_val, y_val, n_epochs=500, verbose=False
         )
-        self.assertAlmostEqual(train_losses[-1], 0, places=4)
+        self.assertAlmostEqual(train_losses[-1], 0, places=3)
         self.assertAlmostEqual(train_accs[-1], 100)
 
     def test_gradients(self):

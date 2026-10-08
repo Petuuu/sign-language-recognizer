@@ -219,13 +219,13 @@ def save_model(model: MLP, output_path: str = "models/model.json") -> None:
                            Defaults to "models/model.json"
     """
     if len(output_path) < 6 or output_path[-5:] != ".json":
-        print("File must be JSON. Returning...")
-        return
+        print("File must be JSON. Exiting...")
+        sys.exit()
     if os.path.exists(output_path):
         confirm = input("File already exists. Overide? [Y/n] ")
         if confirm not in ("Y", "y"):
-            print("Returning...")
-            return
+            print("Exiting...")
+            sys.exit()
 
     try:
         with open(output_path, "w", encoding="utf-8") as f:
@@ -246,11 +246,11 @@ def load_model(model: MLP, path: str = "models/model.json") -> None:
     if not os.path.exists(path):
         confirm = input("File does not exist.")
         if confirm not in ("Y", "y"):
-            print("Returning...")
-            return
+            print("Exiting...")
+            sys.exit()
     if len(path) < 6 or path[-5:] != ".json":
-        print("File must be JSON. Returning...")
-        return
+        print("File must be JSON. Exiting...")
+        sys.exit()
 
     try:
         with open(path, "r", encoding="utf-8") as f:

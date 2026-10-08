@@ -72,7 +72,6 @@ LABEL_TO_LETTER = {
     24: "Y",
 }
 HANDEDNESS_INDEX_TO_NAME = {0: "Right", 1: "Left"}
-MODEL_PATH = "models/no_optimizer_or_batching.json"
 
 
 def normalize_landmarks(landmarks: list[NormalizedLandmark]) -> list[float]:
@@ -213,14 +212,15 @@ def predict(model: MLP, res: HandLandmarkerResult) -> None:
     print("PREDICTION:", LABEL_TO_LETTER[pred])
 
 
-def image_detect(path: str) -> None:
+def image_detect(path: str, model_path: str) -> None:
     """Detect landmarks from images, make prediction of letter, and display them. Image must be jpg, jpeg, or png
 
     Args:
-        path (str): path to an image directory or file
+        path       (str): path to an image directory or file
+        model_path (str): path to model parameters
     """
     model = MLP()
-    load_model(model, MODEL_PATH)
+    load_model(model, model_path)
 
     options = vision.HandLandmarkerOptions(
         base_options=BASE_OPTIONS, num_hands=1, running_mode=vision.RunningMode.IMAGE
@@ -265,10 +265,14 @@ def image_detect(path: str) -> None:
             cv.destroyAllWindows()
 
 
-def stream_detect() -> None:
-    """Detect landmarks from video stream and display them"""
+def stream_detect(model_path: str) -> None:
+    """Detect landmarks from video stream and display them
+
+    Args:
+        model_path (str): path to model parameters
+    """
     model = MLP()
-    load_model(model, MODEL_PATH)
+    load_model(model, model_path)
 
     options = vision.HandLandmarkerOptions(
         base_options=BASE_OPTIONS, num_hands=1, running_mode=vision.RunningMode.VIDEO
