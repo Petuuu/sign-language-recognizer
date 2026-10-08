@@ -216,6 +216,21 @@ def landmarks_to_csv(path: str, output_path: str = "dataset/sample.csv") -> None
             print(f"File '{output_path}' not found or could not be opened. Exiting...")
 
 
+def predict(model: MLP, res: HandLandmarkerResult) -> None:
+    """Predicts and outputs prediction and probabilities from HandLandmarker
+    objects result
+
+    Args:
+        model (MLP)               : model to make prediction with
+        res (HandLandmarkerResult): HandLandmarker object's result
+    """
+    landmarks = normalize_landmarks(res.hand_landmarks[0])
+    model_input = np.array([res.handedness[0][0].index, *landmarks])
+    probas, pred = classify(model(model_input))
+    print("\nPROBABILITIES:\n", probas)
+    print("PREDICTION:", LABEL_TO_LETTER[pred])
+
+
 def image_detect(path: str) -> None:
     """Detect landmarks from images, make prediction of letter, and display them. Image must be jpg, jpeg, or png
 
@@ -240,11 +255,7 @@ def image_detect(path: str) -> None:
                 res = detector.detect(mp_img)
 
                 if res.hand_landmarks:
-                    landmarks = normalize_landmarks(res.hand_landmarks[0])
-                    model_input = np.array([res.handedness[0][0].index, *landmarks])
-                    probas, pred = classify(model(model_input))
-                    print("\nPROBABILITIES:\n", probas)
-                    print("PREDICTION:", LABEL_TO_LETTER[pred])
+                    predict(model, res)
 
                 annotated = draw_landmarks(mp_img.numpy_view(), res)
                 as_bgr = cv.cvtColor(annotated, cv.COLOR_RGB2BGR)
@@ -263,11 +274,7 @@ def image_detect(path: str) -> None:
             res = detector.detect(mp_img)
 
             if res.hand_landmarks:
-                landmarks = normalize_landmarks(res.hand_landmarks[0])
-                model_input = np.array([res.handedness[0][0].index, *landmarks])
-                probas, pred = classify(model(model_input))
-                print("\nPROBABILITIES:\n", probas)
-                print("PREDICTION:", LABEL_TO_LETTER[pred])
+                predict(model, res)
 
             annotated = draw_landmarks(mp_img.numpy_view(), res)
             as_bgr = cv.cvtColor(annotated, cv.COLOR_RGB2BGR)
@@ -304,11 +311,7 @@ def stream_detect() -> None:
             res = detector.detect_for_video(mp_img, timestamp_ms)
 
             if res.hand_landmarks:
-                landmarks = normalize_landmarks(res.hand_landmarks[0])
-                model_input = np.array([res.handedness[0][0].index, *landmarks])
-                probas, pred = classify(model(model_input))
-                print("\nPROBABILITIES:\n", probas)
-                print("PREDICTION:", LABEL_TO_LETTER[pred])
+                predict(model, res)
 
             annotated = draw_landmarks(mp_img.numpy_view(), res)
             as_bgr = cv.cvtColor(annotated, cv.COLOR_RGB2BGR)
