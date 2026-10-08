@@ -1,0 +1,8 @@
+.git/
+docs/
+htmlcov/
+.pytest_cache/
+__pycache__/
+.coverage
+dataset/
+model_results/

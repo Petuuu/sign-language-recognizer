@@ -28,3 +28,11 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 package-mode = false
+
+[[tool.poetry.source]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
+[tool.poetry.dependencies]
+torch = {version = "2.14.0", source = "pytorch-cpu"}
