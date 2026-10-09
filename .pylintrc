@@ -1,0 +1,9 @@
+[MESSAGES CONTROL]
+disable =
+    no-member,
+    invalid-name,
+    too-many-arguments,
+    too-many-positional-arguments,
+    too-many-instance-attributes,
+    too-many-locals,
+    broad-exception-caught

@@ -1,5 +1,7 @@
 """Main program"""
 
+# pylint: disable=too-many-branches
+
 import os
 from pathlib import Path
 from src.image_pipeline import landmarks_to_csv, image_detect, stream_detect
@@ -11,7 +13,8 @@ def main() -> None:
     on user input and predicts the letter signed"""
 
     n = input(
-        "Save landmarks from images (0), detect from images (1, default) or video (2), or train model (3)? "
+        "Save landmarks from images (0), detect from images (1, default) or"
+        "video (2), or train model (3)? "
     )
     if n == "0":
         path = input(

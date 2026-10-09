@@ -1,27 +1,27 @@
 """Model pretraining"""
 
-import os
-import sys
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from src.model.architecture import MLP, save_model
-from src.model.helpers import create_dataset, classify, cross_entropy, adam
+from src.model.helpers import create_dataset, classify, cross_entropy
+from src.helpers import check_file_exists
 
 
-def handle_training() -> None:
+def handle_training() -> None:  # pragma: no cover
     """Handles training initialization"""
     landmarks_path = input("Path to landmarks (default 'dataset/landmarks.csv'): ")
     plot_path = input(
-        "Path to which plot is to be saved (default 'model_results/pretraining.png')"
+        "Path to which plot is to be saved (default 'model_results/final/pretraining.png'): "
     )
     model_path = input(
-        "Path to which model is to be saved (default 'models/model.json')"
+        "Path to which model is to be saved (default 'models/model.json'): "
     )
 
     if landmarks_path == "":
         landmarks_path = "dataset/landmarks.csv"
     if plot_path == "":
-        plot_path = "model_results/pretraining.png"
+        plot_path = "model_results/final/pretraining.png"
     if model_path == "":
         model_path = "models/model.json"
 
@@ -128,21 +128,23 @@ def plot_training(
         val_accs     (list[float]): validation classification accurary of each iteration
         output_path          (str): Path to which the plot is to be saved. Must be PNG or JPG
     """
-    if len(output_path) < 5 or output_path[-4:] != ".png":
+    filename = Path(output_path).name
+    if len(filename) < 5 or filename[-4:] not in (".png", ".jpg"):
         print("File must be PNG or JPG")
-        sys.exit()
-    if os.path.exists(output_path):
-        confirm = input("File already exists. Overide? [Y/n] ")
-        if confirm not in ("Y", "y"):
-            return
+        return
+    if not check_file_exists(output_path, "return"):
+        return
+    parent = Path(output_path).parent
+    if not parent.exists():
+        raise FileNotFoundError(f"Output directory '{parent}' does not exist.")
 
     epochs = range(1, len(train_losses) + 1)
-    if not (len(train_losses) == len(val_losses) == len(train_accs) == len(val_accs)):
+    if not len(train_losses) == len(val_losses) == len(train_accs) == len(val_accs):
         raise ValueError("All training and validation lists must have the same length.")
 
-    try:
-        fig, (loss_ax, acc_ax) = plt.subplots(1, 2, figsize=(12, 5))
+    fig, (loss_ax, acc_ax) = plt.subplots(1, 2, figsize=(12, 5))
 
+    try:
         loss_ax.plot(epochs, train_losses, label="Training loss")
         loss_ax.plot(epochs, val_losses, label="Validation loss")
         loss_ax.set_title("Loss")
@@ -161,6 +163,7 @@ def plot_training(
 
         fig.tight_layout()
         fig.savefig(output_path)
+    except Exception:
+        print(f"File '{output_path}' could not be opened. Exiting...")
+    finally:
         plt.close(fig)
-    except:
-        print(f"File '{output_path}' not found or could not be opened. Returning...")

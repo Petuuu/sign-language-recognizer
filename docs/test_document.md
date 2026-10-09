@@ -7,17 +7,18 @@
 ```
 Name                        Stmts   Miss Branch BrPart  Cover   Missing
 -----------------------------------------------------------------------
-src/model/architecture.py      74      3      8      3    93%   126, 152, 188
-src/model/helpers.py           14      0      0      0   100%
-src/model/train.py              4      0      0      0   100%
+src/model/architecture.py     127      5     18      2    95%   166, 209, 274-276
+src/model/helpers.py           43      0      4      0   100%
+src/model/train.py             62      4     16      2    92%   108, 138, 168-169
 -----------------------------------------------------------------------
-TOTAL                          92      3      8      3    94%
+TOTAL                         232      9     38      4    95%
 ```
 
 ## Test structure
 
 ```
 sign-language-recognizer/
+├── check_extracted_landmarks.py
 ├── test_architecture.py
 |   └── TestModel
 |       ├── test_architecture
@@ -32,6 +33,8 @@ sign-language-recognizer/
 |       ├── test_relu
 |       ├── test_softmax_small
 |       ├── test_softmax
+|       ├── test_adam_small
+|       ├── test_adam
 |       ├── test_create_dataset
 |       └── test_classification
 |
@@ -46,6 +49,8 @@ sign-language-recognizer/
         └── test_layers_change
 ```
 
+### check_extracted_landmarks.py
+
 ### TestModel
 
 Ensures that the implemented model's architecture is correct with the following tests:
@@ -55,7 +60,7 @@ Ensures that the implemented model's architecture is correct with the following 
 
 ### TestMethods
 
-- Ensures that implemented mathematical functions (cross entropy loss, ReLU, softmax) work correctly and tests performance against PyTorch's implementations using inputs of size n=10 (functionality) and n=10^8 (performance)
+- Ensures that implemented mathematical functions (cross entropy loss, ReLU, softmax, adam) work correctly and tests performance against PyTorch's implementations using inputs of size n=10 (functionality) and n=10^8 (performance)
 - `test_create_dataset`
 - `test_classification`
 
@@ -97,4 +102,7 @@ The coverage report can be composed with
 poetry run coverage run --branch -m pytest
 ```
 
-The report can then be displayed with `poetry run coverage report -m` or `poetry run coverage html`.
+The report can then be displayed with `poetry run coverage report -m` or `poetry run coverage html`. To run the previous commands using Docker, simply replace `poetry run` with
+```bash
+docker run -it --rm sign-language-recognizer
+```

@@ -1,23 +1,17 @@
 """Manual tests for image pipeline"""
 
+# pylint: disable=duplicate-code
+
 import os
 import sys
-import numpy as np
 from pathlib import Path
-
+import numpy as np
 import mediapipe as mp
 from mediapipe.tasks.python import vision
 from mediapipe.tasks.python.components.containers.landmark import NormalizedLandmark
-from mediapipe.tasks.python.vision.hand_landmarker import (
-    HandLandmarkerResult,
-)
 import cv2 as cv
-from src.image_pipeline import (
-    LABEL_TO_LETTER,
-    LETTER_TO_LABEL,
-    BASE_OPTIONS,
-    HANDEDNESS_INDEX_TO_NAME,
-)
+from src.image_pipeline import LABEL_TO_LETTER, LETTER_TO_LABEL, BASE_OPTIONS
+from src.helpers import check_file_exists
 
 
 def format_landmarks(points: list[float]) -> list[NormalizedLandmark]:
@@ -51,11 +45,7 @@ def landmarks_to_csv(path: str, output_path: str) -> None:
         path (str): path to an image directory or file
         output_path (str): path to output CSV file. Defaults to "dataset/unnormalized.csv"
     """
-    if os.path.exists(output_path):
-        confirm = input("File already exists. Overide? [Y/n] ")
-        if confirm not in ("Y", "y"):
-            print("Exiting...")
-            sys.exit()
+    check_file_exists(output_path)
 
     options = vision.HandLandmarkerOptions(
         base_options=BASE_OPTIONS, num_hands=2, running_mode=vision.RunningMode.IMAGE
@@ -108,9 +98,7 @@ def landmarks_to_csv(path: str, output_path: str) -> None:
                 f.write(f"{label},{handedness},{points}\n")
 
 
-def draw_landmarks(
-    img: np.ndarray, landmarks: list[NormalizedLandmark], handedness: str
-):
+def draw_landmarks(img: np.ndarray, landmarks: list[NormalizedLandmark]):
     """Original draw_landmarks function that draws landmarks from a list of
     NormalizedLandmark objects rather than a HandLandmarkerResult object
 
@@ -139,8 +127,12 @@ def draw_landmarks(
 
 
 def draw_extracted_landmarks(path: str) -> None:
-    """Draws extracted landmarks on original picture to ensure validity"""
-    with open(path, "r") as f:
+    """Draw extracted landmarks on original picture to ensure validity
+
+    Args:
+        path (str): Path to file from which landmarks are read
+    """
+    with open(path, "r", encoding="utf-8") as f:
         for line in f:
             form = line.strip().split(",")
             landmarks = format_landmarks(form[2:])
@@ -148,9 +140,7 @@ def draw_extracted_landmarks(path: str) -> None:
 
             as_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
             mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=as_rgb)
-            annotated = draw_landmarks(
-                mp_img.numpy_view(), landmarks, HANDEDNESS_INDEX_TO_NAME[int(form[1])]
-            )
+            annotated = draw_landmarks(mp_img.numpy_view(), landmarks)
             as_bgr = cv.cvtColor(annotated, cv.COLOR_RGB2BGR)
 
             cv.imshow("Image", as_bgr)
@@ -160,10 +150,13 @@ def draw_extracted_landmarks(path: str) -> None:
 
 if __name__ == "__main__":
     n = input(
-        "Save unnormalized landmarks from images (0) or check extracted unnormalized landmarks (1, default)? "
+        "Save unnormalized landmarks from images (0) or check extracted unnormalized"
+        "landmarks (1, default)? "
     )
     if n == "0":
-        landmarks_to_csv(Path("dataset/sample/"), Path("dataset/unnormalized.csv"))
+        main_path = Path("dataset/sample/")
+        main_output_path = Path("dataset/unnormalized.csv")
+        landmarks_to_csv(main_path, main_output_path)
     elif n in ("1", ""):
         draw_extracted_landmarks(Path("dataset/unnormalized.csv"))
     else:

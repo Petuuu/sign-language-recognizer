@@ -1,11 +1,15 @@
 """Tests for model"""
 
+import tempfile
 import unittest
-import os
+from contextlib import redirect_stdout
+from io import StringIO
 from time import time
+from pathlib import Path
 import numpy as np
 import torch
 from torch import nn
+
 from src.model.architecture import MLP, Dropout, save_model, load_model
 from src.model.helpers import create_dataset
 from src.model.train import train
@@ -58,7 +62,9 @@ class TestModel(unittest.TestCase):
         correct = torch_model(x_torch)
         end = time()
         print(f"PyTorch time: {end - start} s")
-        np.testing.assert_allclose(own, correct.detach().numpy(), rtol=1e-5, atol=1e-6)
+        np.testing.assert_allclose(
+            own, torch.detach(correct).numpy(), rtol=1e-5, atol=1e-6
+        )
 
         # Backward
         upstream = own.copy()
@@ -86,14 +92,70 @@ class TestModel(unittest.TestCase):
 
     def test_serialization(self):
         """Tests that model parameters can be written to a JSON file
-        and they are successfully loaded from said file"""
+        and they are successfully loaded from said file. Also tests error
+        handling"""
         model = MLP()
         train(model, X_train, y_train, X_val, y_val, eval_freq=0, verbose=False)
         original = model.to_dict()
-        path = "test.json"
 
-        save_model(model, path)
-        load_model(model, path)
-        os.remove(path)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "test.json"
+            save_model(model, str(path))
+            load_model(model, str(path))
 
         np.testing.assert_equal(original, model.to_dict())
+
+        # incorrect path
+        incorrect_path = "incorrect/path.json"
+        with redirect_stdout(StringIO()) as output:
+            with self.assertRaisesRegex(
+                FileNotFoundError,
+                r"Output directory 'incorrect' does not exist\.",
+            ):
+                save_model(model, incorrect_path)
+        self.assertEqual(output.getvalue(), "")
+
+        with redirect_stdout(StringIO()) as output:
+            with self.assertRaises(SystemExit):
+                load_model(model, incorrect_path)
+        self.assertEqual(output.getvalue(), "File does not exist. Exiting...\n")
+
+        # file not JSON
+        with tempfile.TemporaryDirectory() as temp_dir:
+            non_json_path = Path(temp_dir) / "non_json_path"
+            with redirect_stdout(StringIO()) as output:
+                with self.assertRaises(SystemExit):
+                    save_model(model, str(non_json_path))
+            self.assertEqual(output.getvalue(), "File must be JSON. Exiting...\n")
+
+            non_json_path.touch()
+            with redirect_stdout(StringIO()) as output:
+                with self.assertRaises(SystemExit):
+                    load_model(model, str(non_json_path))
+            self.assertEqual(output.getvalue(), "File must be JSON. Exiting...\n")
+
+        # file name too short
+        with tempfile.TemporaryDirectory() as temp_dir:
+            short_path = Path(temp_dir) / ".json"
+            with redirect_stdout(StringIO()) as output:
+                with self.assertRaises(SystemExit):
+                    save_model(model, str(short_path))
+            self.assertEqual(output.getvalue(), "File must be JSON. Exiting...\n")
+
+            short_path.touch()
+            with redirect_stdout(StringIO()) as output:
+                with self.assertRaises(SystemExit):
+                    load_model(model, str(short_path))
+            self.assertEqual(output.getvalue(), "File must be JSON. Exiting...\n")
+
+        # invalid JSON contents
+        with tempfile.TemporaryDirectory() as temp_dir:
+            invalid_path = Path(temp_dir) / "invalid.json"
+            invalid_path.write_text("not valid JSON", encoding="utf-8")
+            with redirect_stdout(StringIO()) as output:
+                with self.assertRaises(SystemExit):
+                    load_model(model, str(invalid_path))
+            self.assertEqual(
+                output.getvalue(),
+                f"File '{invalid_path}' could not be opened or incorrect content. Exiting...\n",
+            )

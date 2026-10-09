@@ -1,3 +1,10 @@
+************* Module tests.test_architecture
+tests/test_architecture.py:91:8: W1503: Redundant use of assertEqual with constant value ('NOT DONE', 'WIP') (redundant-unittest-assert)
+************* Module tests.test_training
+tests/test_training.py:33:8: W1503: Redundant use of assertEqual with constant value ('NOT DONE', 'WIP') (redundant-unittest-assert)
+tests/test_training.py:37:8: W1503: Redundant use of assertEqual with constant value ('NOT DONE', 'WIP') (redundant-unittest-assert)
+************* Module src.model.helpers
+src/model/helpers.py:128:5: W0511: TODO finish docstring (fixme)
 
---------------------------------------------------------------------
-Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+------------------------------------------------------------------
+Your code has been rated at 9.96/10 (previous run: 9.96/10, +0.00)

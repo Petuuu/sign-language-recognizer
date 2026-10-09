@@ -1,10 +1,9 @@
 """Methods for image and video processing and landmarking"""
 
-# pylint: disable=no-member
-
 import os
 import sys
 import time
+from pathlib import Path
 import numpy as np
 import mediapipe as mp
 from mediapipe.tasks.python import vision
@@ -15,6 +14,7 @@ from mediapipe.tasks.python.vision.hand_landmarker import (
 import cv2 as cv
 from src.model.architecture import MLP, load_model
 from src.model.helpers import classify
+from src.helpers import check_file_exists
 
 BASE_OPTIONS = mp.tasks.BaseOptions(model_asset_path="models/hand_landmarker.task")
 LETTER_TO_LABEL = {
@@ -138,11 +138,10 @@ def landmarks_to_csv(path: str, output_path: str = "dataset/sample.csv") -> None
         path (str): path to an image directory or file
         output_path (str): path to output CSV file. Defaults to "dataset/sample.csv"
     """
-    if os.path.exists(output_path):
-        confirm = input("File already exists. Overide? [Y/n] ")
-        if confirm not in ("Y", "y"):
-            print("Exiting...")
-            sys.exit()
+    check_file_exists(output_path)
+    parent = Path(output_path).parent
+    if not parent.exists():
+        raise FileNotFoundError(f"Output directory '{parent}' does not exist.")
 
     options = vision.HandLandmarkerOptions(
         base_options=BASE_OPTIONS, num_hands=2, running_mode=vision.RunningMode.IMAGE
@@ -193,8 +192,8 @@ def landmarks_to_csv(path: str, output_path: str = "dataset/sample.csv") -> None
                     )
                     f.write(f"{label},{handedness},{normalized}\n")
 
-        except:
-            print(f"File '{output_path}' not found or could not be opened. Exiting...")
+        except Exception:
+            print(f"File '{output_path}' could not be opened. Exiting...")
 
 
 def predict(model: MLP, res: HandLandmarkerResult) -> None:
@@ -213,7 +212,8 @@ def predict(model: MLP, res: HandLandmarkerResult) -> None:
 
 
 def image_detect(path: str, model_path: str) -> None:
-    """Detect landmarks from images, make prediction of letter, and display them. Image must be jpg, jpeg, or png
+    """Detect landmarks from images, make prediction of letter, and display them.
+    Image must be jpg, jpeg, or png
 
     Args:
         path       (str): path to an image directory or file
