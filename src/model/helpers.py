@@ -1,4 +1,4 @@
-"""Model helper methods"""
+"""Helper functions for model"""
 
 import os
 import sys
@@ -116,5 +116,39 @@ def classify(logits: np.ndarray) -> tuple[list[float], int]:
     return probas, idx + 1 if probas[idx] > 0.4 else 0
 
 
-def adam():
-    """Adam optimizer for training algorithm"""
+def adam(
+    grad: np.ndarray,
+    beta_1: float,
+    beta_2: float,
+    moment_1: np.ndarray,
+    moment_2: np.ndarray,
+    timestep: int,
+    epsilon: float = 1e-8,
+) -> tuple[np.ndarray]:
+    # TODO finish docstring
+    """Calculate optimizing step using Adam
+
+    Args:
+        grad (np.ndarray):
+        beta_1 (float):
+        beta_2 (float):
+        moment_1 (np.ndarray):
+        moment_2 (np.ndarray):
+        timestep (int):
+        epsilon (float): Defaults to 1e-8
+
+    Returns:
+        (tuple):
+            update   (np.ndarray):
+            moment_1 (np.ndarray):
+            moment_2 (np.ndarray):
+    """
+
+    moment_1 = beta_1 * moment_1 + (1 - beta_1) * grad
+    moment_2 = beta_2 * moment_2 + (1 - beta_2) * grad**2
+
+    corrected_1 = moment_1 / (1 - beta_1**timestep)
+    corrected_2 = moment_2 / (1 - beta_2**timestep)
+    update = corrected_1 / (np.sqrt(corrected_2) + epsilon)
+
+    return update, moment_1, moment_2

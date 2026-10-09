@@ -6,7 +6,14 @@ import numpy as np
 import torch
 from torch import nn
 import torch.nn.functional as F
-from src.model.helpers import relu, softmax, cross_entropy, create_dataset, classify
+from src.model.helpers import (
+    relu,
+    softmax,
+    cross_entropy,
+    create_dataset,
+    classify,
+    adam,
+)
 
 SIZE = 100000
 SIZE_SMALL = 10
@@ -78,7 +85,7 @@ class TestMethods(unittest.TestCase):
         np.testing.assert_allclose(own, correct.numpy())
 
     def test_softmax_small(self):
-        """Tests foftmax activation fuction with small input"""
+        """Tests softmax activation fuction with small input"""
         x = np.random.rand(SIZE_SMALL)
 
         start = time()
@@ -107,8 +114,93 @@ class TestMethods(unittest.TestCase):
         print(f"PyTorch time: {end - start} s")
         np.testing.assert_allclose(own, correct.numpy())
 
+    def test_adam_small(self):
+        """Tests Adam optimizer with small input"""
+        grads = (
+            np.random.rand(SIZE_SMALL),
+            np.random.rand(SIZE_SMALL),
+            np.random.rand(SIZE_SMALL),
+        )
+        values = np.random.rand(SIZE_SMALL)
+        torch_param = nn.Parameter(torch.from_numpy(values.copy()))
+        torch_optimizer = torch.optim.Adam(
+            [torch_param], lr=0.01, betas=(0.9, 0.999), eps=1e-8
+        )
+        moment_1 = np.zeros_like(values)
+        moment_2 = np.zeros_like(values)
+
+        own_time = pytorch_time = 0
+
+        for timestep, grad in enumerate(grads, start=1):
+            start = time()
+            update, moment_1, moment_2 = adam(
+                grad, 0.9, 0.999, moment_1, moment_2, timestep
+            )
+            end = time()
+            own_time += end - start
+
+            torch_param.grad = torch.from_numpy(grad.copy())
+            before = torch.detach(torch_param).numpy().copy()
+            start = time()
+            torch_optimizer.step()
+            end = time()
+            pytorch_time += end - start
+            torch_update = before - torch.detach(torch_param).numpy()
+
+            np.testing.assert_allclose(update * 0.01, torch_update)
+            state = torch_optimizer.state[torch_param]
+            np.testing.assert_allclose(moment_1, state["exp_avg"].numpy())
+            np.testing.assert_allclose(moment_2, state["exp_avg_sq"].numpy())
+
+        print(f"\nOwn time: {own_time} s")
+        print(f"PyTorch time: {pytorch_time} s")
+
+    def test_adam(self):
+        """Tests Adam optimizer with large input"""
+        grads = (
+            np.random.rand(SIZE),
+            np.random.rand(SIZE),
+            np.random.rand(SIZE),
+        )
+        values = np.random.rand(SIZE)
+        torch_param = nn.Parameter(torch.from_numpy(values.copy()))
+        torch_optimizer = torch.optim.Adam(
+            [torch_param], lr=0.01, betas=(0.9, 0.999), eps=1e-8
+        )
+        moment_1 = np.zeros_like(values)
+        moment_2 = np.zeros_like(values)
+
+        own_time = pytorch_time = 0
+
+        for timestep, grad in enumerate(grads, start=1):
+            start = time()
+            update, moment_1, moment_2 = adam(
+                grad, 0.9, 0.999, moment_1, moment_2, timestep
+            )
+            end = time()
+            own_time += end - start
+
+            torch_param.grad = torch.from_numpy(grad.copy())
+            before = torch.detach(torch_param).numpy().copy()
+            start = time()
+            torch_optimizer.step()
+            end = time()
+            pytorch_time += end - start
+            torch_update = before - torch.detach(torch_param).numpy()
+
+            np.testing.assert_allclose(update * 0.01, torch_update)
+            state = torch_optimizer.state[torch_param]
+            np.testing.assert_allclose(moment_1, state["exp_avg"].numpy())
+            np.testing.assert_allclose(moment_2, state["exp_avg_sq"].numpy())
+
+        print(f"\nOwn time: {own_time} s")
+        print(f"PyTorch time: {pytorch_time} s")
+
     def test_create_dataset(self):
         """Tests that dataset is prepared correctly"""
+        with self.assertRaises(SystemExit):
+            create_dataset("incorrect/path")
+
         X_train, y_train, X_val, y_val = create_dataset("dataset/sample.csv")
 
         self.assertEqual(X_train.shape, (16, 61))

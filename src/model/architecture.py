@@ -3,23 +3,29 @@
 import os
 import json
 import sys
+from pathlib import Path
 import numpy as np
-from src.model.helpers import relu, relu_derivative
+from src.model.helpers import relu, relu_derivative, adam
+from src.helpers import check_file_exists
 
 NUM_INPUTS = 61  # handedness + 21 × (x, y, z) - wrist
 NUM_CLASSES = 24  # letters A-I and K-Y
-LEARNING_RATE = 0.01
+DROPOUT_RATE = 0.2
+OPTIMIZER_PARAMS = (0.001, 0.9, 0.999)
 
 
 class MLP:
     """Multi-Layer Perceptron model architecture
 
     Attributes:
-        input_size               (int): dimension of input layer
-        hidden_sizes (tuple[int, int]): dimensions of hidden layers
-        output_size              (int): dimension of output layer
-        dropout_rate           (float): percentage of neurons to be dropped
-        lr                     (float): learning rate
+        input_size                (int): dimension of input layer
+        hidden_sizes (tuple[int,  int]): dimensions of hidden layers
+        output_size               (int): dimension of output layer
+        dropout_rate            (float): percentage of neurons to be dropped
+        optimizer_params        (tuple): parameters for Adam optimizer
+            (float): alpha (learning rate)
+            (float): beta_1 (1. moment (mean) hyperparameter)
+            (float): beta_2 (2. moment (variance) hyperparameter)
     """
 
     def __init__(
@@ -27,14 +33,15 @@ class MLP:
         input_size: int = NUM_INPUTS,
         hidden_sizes: tuple[int, int] = (128, 64),
         output_size: int = NUM_CLASSES,
-        lr: float = LEARNING_RATE,
+        dropout_rate: float = DROPOUT_RATE,
+        optimizer_params: tuple[float] = OPTIMIZER_PARAMS,
     ):
         """Class constructor, create layers"""
-        self.dense_1 = Dense(input_size, hidden_sizes[0], lr)
-        self.dropout_1 = Dropout(0.2)
-        self.dense_2 = Dense(hidden_sizes[0], hidden_sizes[1], lr)
-        self.dropout_2 = Dropout(0.2)
-        self.dense_3 = Dense(hidden_sizes[1], output_size, lr)
+        self.dense_1 = Dense(input_size, hidden_sizes[0], optimizer_params)
+        self.dropout_1 = Dropout(dropout_rate)
+        self.dense_2 = Dense(hidden_sizes[0], hidden_sizes[1], optimizer_params)
+        self.dropout_2 = Dropout(dropout_rate)
+        self.dense_3 = Dense(hidden_sizes[1], output_size, optimizer_params)
 
         self.relu_1_input = None
         self.relu_2_input = None
@@ -44,7 +51,8 @@ class MLP:
 
         Args:
             x  (np.ndarray): input landmarks
-            training (bool): tells whether the model is in training or inference mode. Defaults to False
+            training (bool): tells whether the model is in training or inference mode.
+                             Defaults to False
 
         Returns:
             logits (np.ndarray): prediction scores for each class
@@ -105,18 +113,32 @@ class Dense:
     """Fully connected layer
 
     Attributes:
-        input_size  (int): dimension of input features
-        output_size (int): dimension of output features
-        lr        (float): learning rate
+        input_size         (int): dimension of input features
+        output_size        (int): dimension of output features
+        optimizer_params (tuple): parameters for Adam optimizer
+            (float): alpha (learning rate)
+            (float): beta_1 (1. moment (mean) hyperparameter)
+            (float): beta_2 (2. moment (variance) hyperparameter)
     """
 
-    def __init__(self, input_size: int, output_size: int, lr: float):
+    def __init__(
+        self,
+        input_size: int,
+        output_size: int,
+        optimizer_params: tuple[float],
+    ):
         """Class constructor, initialize weights and biases"""
         self.weights = np.random.normal(size=(input_size, output_size)) * np.sqrt(
             2.0 / input_size
         )
         self.biases = np.zeros(output_size)
-        self.lr = lr
+        self.lr = optimizer_params[0]
+        self.beta_1, self.beta_2 = optimizer_params[1:]
+        self.weights_moment_1 = np.zeros_like(self.weights)
+        self.weights_moment_2 = np.zeros_like(self.weights)
+        self.biases_moment_1 = np.zeros_like(self.biases)
+        self.biases_moment_2 = np.zeros_like(self.biases)
+        self.timestep = 0
         self.input = None
 
     def forward(self, x: np.ndarray) -> np.ndarray:
@@ -147,8 +169,25 @@ class Dense:
         grad_biases = grad
 
         grad_input = grad @ self.weights.T
-        self.weights -= self.lr * grad_weights
-        self.biases -= self.lr * grad_biases
+        self.timestep += 1
+        weights_update, self.weights_moment_1, self.weights_moment_2 = adam(
+            grad_weights,
+            self.beta_1,
+            self.beta_2,
+            self.weights_moment_1,
+            self.weights_moment_2,
+            self.timestep,
+        )
+        biases_update, self.biases_moment_1, self.biases_moment_2 = adam(
+            grad_biases,
+            self.beta_1,
+            self.beta_2,
+            self.biases_moment_1,
+            self.biases_moment_2,
+            self.timestep,
+        )
+        self.weights -= self.lr * weights_update
+        self.biases -= self.lr * biases_update
 
         return grad_input
 
@@ -178,7 +217,8 @@ class Dropout:
 
         Args:
             x  (np.ndarray): input features
-            training (bool): tells whether the model is in training or inference mode. Defaults to False
+            training (bool): tells whether the model is in training or inference mode.
+                            Defaults to False
 
         Returns:
             probas (np.ndarray): output features
@@ -218,21 +258,22 @@ def save_model(model: MLP, output_path: str = "models/model.json") -> None:
         output_path (str): Path to which the parameters are to be saved. Must be JSON.
                            Defaults to "models/model.json"
     """
-    if len(output_path) < 6 or output_path[-5:] != ".json":
+    check_file_exists(output_path)
+    filename = Path(output_path).name
+    if len(filename) < 6 or filename[-5:] != ".json":
         print("File must be JSON. Exiting...")
         sys.exit()
-    if os.path.exists(output_path):
-        confirm = input("File already exists. Overide? [Y/n] ")
-        if confirm not in ("Y", "y"):
-            print("Exiting...")
-            sys.exit()
+    parent = Path(output_path).parent
+    if not parent.exists():
+        raise FileNotFoundError(f"Output directory '{parent}' does not exist.")
 
     try:
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(json.dumps(model.to_dict()))
 
-    except:
-        print(f"File '{output_path}' not found or could not be opened. Exiting...")
+    except Exception:
+        print(f"File '{output_path}' could not be opened. Exiting...")
+        sys.exit()
 
 
 def load_model(model: MLP, path: str = "models/model.json") -> None:
@@ -244,11 +285,10 @@ def load_model(model: MLP, path: str = "models/model.json") -> None:
                      Defaults to "models/model.json"
     """
     if not os.path.exists(path):
-        confirm = input("File does not exist.")
-        if confirm not in ("Y", "y"):
-            print("Exiting...")
-            sys.exit()
-    if len(path) < 6 or path[-5:] != ".json":
+        print("File does not exist. Exiting...")
+        sys.exit()
+    filename = Path(path).name
+    if len(filename) < 6 or filename[-5:] != ".json":
         print("File must be JSON. Exiting...")
         sys.exit()
 
@@ -264,6 +304,6 @@ def load_model(model: MLP, path: str = "models/model.json") -> None:
         model.dense_3.weights = np.asarray(params["dense_3_weights"])
         model.dense_3.biases = np.asarray(params["dense_3_biases"])
 
-    except:
+    except Exception:
         print(f"File '{path}' could not be opened or incorrect content. Exiting...")
         sys.exit()
