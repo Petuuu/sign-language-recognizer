@@ -23,7 +23,8 @@ sign-language-recognizer/
 |   └── TestModel
 |       ├── test_architecture
 |       ├── test_dropout
-|       └── test_error_checking
+|       ├── test_error_checking
+|       └── test_serialization
 |
 ├── test_helpers.py
 |   └── TestMethods
@@ -49,31 +50,35 @@ sign-language-recognizer/
         └── test_layers_change
 ```
 
-### check_extracted_landmarks.py
+### check_extracted_landmarks.py (manual test)
+
+Ensures that landmarks extracted with `src/image_pipeline.py::landmarks_to_csv` are correct. This is done by writing unnormalized landmarks to a file using said function and then reading them and drawing them on their corresponding images.
 
 ### TestModel
 
-Ensures that the implemented model's architecture is correct with the following tests:
+Ensures that the implemented model's architecture is correct and its parameters are properly saved and loaded with the following tests:
 - `test_architecture`: data is correctly forward and backward propagated. output data compared with equivalent PyTorch model
 - `test_dropout`: the dropout layer functions correctly
 - `test_error_checking`: invalid inputs and propagation orders are accounted for
+- `test_serialization`: model parameters are correctly saved to and loaded from a JSON file and errors are handled
 
 ### TestMethods
 
 - Ensures that implemented mathematical functions (cross entropy loss, ReLU, softmax, adam) work correctly and tests performance against PyTorch's implementations using inputs of size n=10 (functionality) and n=10^8 (performance)
-- `test_create_dataset`
-- `test_classification`
+- `test_create_dataset`: training and validation datasets are correctly generated
+- `test_classification`: model output logits are classified to correct label
 
 ### TestPipeline
 
-- `test_normalization`
+- `test_normalization`: landmarks are centered and normalized correctly
 
 ### TestTraining
 
-Tests that the training loop correctly trains the model with the following tests:
+Tests that the training loop correctly trains the model and metrics are properly plotted with the following tests:
 - `test_propagation`: loss is propagated and the weight updates make the model improve
 - `test_gradients`: gradients are non_zero and loss decreases
 - `test_layers_change`: all model layers update after each optimizer step
+- `test_plotting`: training results are saved as a PNG or JPG plot and errors are handled
 
 ## Test reproducibility
 

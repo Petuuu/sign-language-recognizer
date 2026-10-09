@@ -24,7 +24,7 @@ Only static letters can be recognizes, i.e. letters that don't require motion to
 
 # Usage
 
-First, clone the repository, navigate to the project, and unzip `dataset.zip` to access the dataset used for training.
+First, clone the repository, navigate to the project, and unzip `dataset.zip` to access the dataset used for training. The image and video mode may not work on command line interface or Docker on other than Linux. If this is the case, start the web server to test these.
 
 ## Command line
 

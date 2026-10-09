@@ -48,7 +48,7 @@ def landmarks_to_csv(path: str, output_path: str) -> None:
     check_file_exists(output_path)
 
     options = vision.HandLandmarkerOptions(
-        base_options=BASE_OPTIONS, num_hands=2, running_mode=vision.RunningMode.IMAGE
+        base_options=BASE_OPTIONS, num_hands=1, running_mode=vision.RunningMode.IMAGE
     )
     with vision.HandLandmarker.create_from_options(options) as detector:
         with open(output_path, "w", encoding="utf-8") as f:

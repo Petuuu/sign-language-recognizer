@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign language recognizer</title>
+  </head>
+  <body>
+    <h1>Sign language recognizer</h1>
+    <video id="camera" autoplay playsinline width="640" height="480"></video>
+    <canvas id="frame" width="640" height="480" hidden></canvas>
+    <p>Prediction: <strong id="prediction">-</strong></p>
+    <p>Confidence: <span id="confidence">-</span></p>
+    <button id="start">Start camera</button>
+    <button id="stop" disabled>Stop camera</button>
+    <p>
+      Or select an image:
+      <input id="image" type="file" accept="image/jpg,image/jpeg,image/png">
+    </p>
+    <script>
+      const video = document.querySelector("#camera");
+      const canvas = document.querySelector("#frame");
+      const prediction = document.querySelector("#prediction");
+      const confidence = document.querySelector("#confidence");
+      let stream;
+      let timer;
+
+      async function sendImage(blob) {
+        const response = await fetch("/predict", {method: "POST", body: blob});
+        if (!response.ok) return;
+        const result = await response.json();
+        prediction.textContent = result.prediction;
+        confidence.textContent = `${(result.confidence * 100).toFixed(1)}%`;
+      }
+
+      async function sendFrame() {
+        if (!stream || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.8));
+        await sendImage(blob);
+      }
+
+      document.querySelector("#image").onchange = async (event) => {
+        const file = event.target.files[0];
+        if (file) await sendImage(file);
+      };
+
+      document.querySelector("#start").onclick = async () => {
+        stream = await navigator.mediaDevices.getUserMedia({video: true});
+        video.srcObject = stream;
+        timer = setInterval(sendFrame, 500);
+        document.querySelector("#start").disabled = true;
+        document.querySelector("#stop").disabled = false;
+      };
+
+      document.querySelector("#stop").onclick = () => {
+        clearInterval(timer);
+        stream.getTracks().forEach(track => track.stop());
+        stream = undefined;
+        document.querySelector("#start").disabled = false;
+        document.querySelector("#stop").disabled = true;
+      };
+    </script>
+  </body>
+</html>
