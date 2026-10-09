@@ -16,7 +16,6 @@
 
 ## Report
 
-- **Current todo:** document results with own data, finish testing for training algorithm
 - **Progress:** ensure that extracted landmarks are correct, finish backwards pass (Adam optimizer), and pretrain with different options
 - **Uncertanties ja difficulties:**
-- **Next:** finish testing for training algorithm, try different model architectures to see if they learn to recognize letters better, and finalize of documentation (results, implementation, and testing)
+- **Next:** finish testing for training algorithm, finalize documentation (results, implementation, and testing), and try different model architectures to see if they learn to recognize letters better
