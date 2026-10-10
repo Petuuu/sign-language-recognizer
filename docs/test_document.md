@@ -1,6 +1,6 @@
 ## General
 
-**WIP**: Training and validation losses and accuracies are available as a plot and a text file in `model_results/`. The directory also contains results showing how the pretrained model classifies images and stream of me signing each valid letter. N.B I was not included in the training data.
+Training and validation losses and accuracies of different strategies are available as plots.
 
 ## Coverage report
 

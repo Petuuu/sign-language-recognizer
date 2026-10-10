@@ -10,8 +10,7 @@
 || 2.5 h | Adam optimizer | research Adam optimizer create own implementation for backpropagation. at first the network didn't learn with it, but this was resolved by lowering the learning rate ||
 || 2 h | Pylint and coverage | refactor code how pylint sees fit and ensure coverage ||
 | 9.10. | 1 h | web interface | generate web interface for image pipeline with *GitHub Copilot* and modify Python script to include proper documentation and work similar to original pipeline ||
-| 10.10. | 1 h | tests | finish testing for training algorithm + branch testing in model architecture | how to properly test a neural network|
-||||||
+| 10.10. | 1 h | tests + documentation | finish testing for training algorithm and branch testing in model architecture + finalize documentation | how to properly test a neural network|
 
 - **Total:** 16 h
 
@@ -19,4 +18,4 @@
 
 - **Progress:** ensure that extracted landmarks are correct, finish backwards pass (Adam optimizer), add support for left-handed signing, and pretrain with different options
 - **Uncertanties ja difficulties:** The model has a hard time learning to differentiate T and N (recognizes often as S) and K, R, and U (recognizes as V)
-- **Next:** finalize documentation (results, implementation, and testing)  and try different model architectures to see if they learn to recognize letters better
+- **Next:** try different model architectures to see if they learn to recognize letters better
