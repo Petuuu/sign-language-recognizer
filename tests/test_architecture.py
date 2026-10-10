@@ -9,9 +9,8 @@ from pathlib import Path
 import numpy as np
 import torch
 from torch import nn
-
 from src.model.architecture import MLP, Dropout, save_model, load_model
-from src.model.helpers import create_dataset
+from src.model.helpers import create_dataset, cross_entropy
 from src.model.train import train
 
 SIZE = 100000
@@ -88,7 +87,19 @@ class TestModel(unittest.TestCase):
 
     def test_error_checking(self):
         """Tests that invalid inputs and propagation orders are accounted for"""
-        self.assertEqual("NOT DONE", "WIP")
+        # incorrect dropout value
+        with self.assertRaises(ValueError):
+            _ = MLP(dropout_rate=-0.5)
+        with self.assertRaises(ValueError):
+            _ = MLP(dropout_rate=1.0)
+
+        # backward pass before forward pass
+        model = MLP()
+        logits = np.random.rand(61)
+        label = 5
+        _, grad = cross_entropy(logits, label)
+        with self.assertRaises(RuntimeError):
+            model.backward(grad)
 
     def test_serialization(self):
         """Tests that model parameters can be written to a JSON file

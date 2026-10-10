@@ -7,11 +7,11 @@
 ```
 Name                        Stmts   Miss Branch BrPart  Cover   Missing
 -----------------------------------------------------------------------
-src/model/architecture.py     127      5     18      2    95%   166, 209, 274-276
+src/model/architecture.py     127      3     18      0    98%   274-276
 src/model/helpers.py           43      0      4      0   100%
-src/model/train.py             62      4     16      2    92%   108, 138, 168-169
+src/model/train.py             61      3     16      1    95%   136, 166-167
 -----------------------------------------------------------------------
-TOTAL                         232      9     38      4    95%
+TOTAL                         231      6     38      1    97%
 ```
 
 ## Test structure
@@ -47,7 +47,8 @@ sign-language-recognizer/
     └── TestTraining
         ├── test_propagation
         ├── test_gradients
-        └── test_layers_change
+        ├── test_layers_change
+        └── test_plotting
 ```
 
 ### check_extracted_landmarks.py (manual test)
