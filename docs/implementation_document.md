@@ -71,7 +71,7 @@ sign-language-recognizer/
 
 The program can't recognize letters that require motion (J, Z, Ä, Ö, Å). This would be the next improvement, along with the program recognizing words instead of just letters.
 
-The program also struggles to recognize letters T and N, often recognizing them as S, and letters K, R, U are recognized as V. This is due to the model having trouble learning, not an architectural design flaw in the model or training algorithm.
+The program also struggles to recognize letters T and N, often recognizing them as S, and letters K, R, and U are recognized as V. This is due to the model having trouble learning, not an architectural design flaw in the model or training algorithm.
 
 ## Performance of methods
 
@@ -81,7 +81,7 @@ Performance of model tested against PyTorch equivalents with n=10^8. Data propag
 
 *GitHub Copilot* was used to generate the web interface (`src/web.html` and `src/web.py`). The *HTML* file was not modified after generation, while the *Python* script was modified to include proper documentation and work similär to original image pipeline.
 
-*Duck.ai* (GPT-5.6 Luna) used to correct isolated syntax errors and help identify the root causes of other errors. Although it often struggled identifying the root causes, its suggestions helped me discover them myself.
+*Duck.ai* (GPT-6 Luna) used to correct isolated syntax errors and help identify the root causes of other errors. Although it often struggled identifying the root causes, its suggestions helped me discover them myself.
 
 ## Final sources
 

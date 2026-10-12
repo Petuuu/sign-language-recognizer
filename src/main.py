@@ -13,7 +13,7 @@ def main() -> None:
     on user input and predicts the letter signed"""
 
     n = input(
-        "Save landmarks from images (0), detect from images (1, default) or"
+        "Save landmarks from images (0), detect from images (1, default) or "
         "video (2), or train model (3)? "
     )
     if n == "0":
