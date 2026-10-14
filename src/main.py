@@ -4,7 +4,7 @@
 
 import os
 from pathlib import Path
-from src.image_pipeline import landmarks_to_csv, image_detect, stream_detect
+from src.image_pipeline import landmarks_to_csv, detect_from_image, detect_from_stream
 from src.model.train import handle_training
 
 
@@ -45,7 +45,7 @@ def main() -> None:
             model_path = "models/model.json"
 
         if os.path.exists(path):
-            image_detect(Path(path), model_path)
+            detect_from_image(Path(path), model_path)
         else:
             print("Incorrect path. Exiting...")
 
@@ -54,7 +54,7 @@ def main() -> None:
         if model_path == "":
             model_path = "models/model.json"
 
-        stream_detect(model_path)
+        detect_from_stream(model_path)
 
     elif n == "3":
         handle_training()

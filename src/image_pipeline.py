@@ -211,7 +211,7 @@ def predict(model: MLP, res: HandLandmarkerResult) -> None:
     print("PREDICTION:", LABEL_TO_LETTER[pred])
 
 
-def image_detect(path: str, model_path: str) -> None:
+def detect_from_image(path: str, model_path: str) -> None:
     """Detect landmarks from images, make prediction of letter, and display them.
     Image must be jpg, jpeg, or png
 
@@ -265,7 +265,7 @@ def image_detect(path: str, model_path: str) -> None:
             cv.destroyAllWindows()
 
 
-def stream_detect(model_path: str) -> None:
+def detect_from_stream(model_path: str) -> None:
     """Detect landmarks from video stream and display them
 
     Args:
