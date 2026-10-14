@@ -1,3 +1,5 @@
+# Week 6
+
 ## Time log
 
 | Date | Time | Topic | Description | Learned |
@@ -18,4 +20,4 @@
 
 - **Progress:** ensure that extracted landmarks are correct, finish backwards pass (Adam optimizer), add support for left-handed signing, and pretrain with different options
 - **Uncertanties ja difficulties:** The model has a hard time learning to differentiate T and N (recognizes often as S) and K, R, and U (recognizes as V). Would it be beneficial for me to add screenshots to `model_results` on how the models recognize my signing?
-- **Next:** try different model architectures to see if they learn to recognize letters better
+- **Next:** finalize documentation and try different model architectures to see if they learn to recognize letters better

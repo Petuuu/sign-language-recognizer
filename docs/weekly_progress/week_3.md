@@ -1,3 +1,5 @@
+# Week 3
+
 ## Time log
 
 | Date | Time | Topic | Description | Learned |
