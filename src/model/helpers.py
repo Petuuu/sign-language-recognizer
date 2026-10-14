@@ -125,23 +125,22 @@ def adam(
     timestep: int,
     epsilon: float = 1e-8,
 ) -> tuple[np.ndarray]:
-    # TODO finish docstring
     """Calculate optimizing step using Adam
 
     Args:
-        grad (np.ndarray):
-        beta_1 (float):
-        beta_2 (float):
-        moment_1 (np.ndarray):
-        moment_2 (np.ndarray):
-        timestep (int):
-        epsilon (float): Defaults to 1e-8
+        grad     (np.ndarray): gradient of the loss with respect to the parameters
+        beta_1        (float): 1. moment (mean) hyperparameter
+        beta_2        (float): 2. moment (variance) hyperparameter
+        moment_1 (np.ndarray): 1. moment estimate from the previous timestep
+        moment_2 (np.ndarray): 2. moment estimate from the previous timestep
+        timestep        (int): optimization timestep used for bias correction
+        epsilon       (float): Small value to prevent division by zero. Defaults to 1e-8
 
     Returns:
         (tuple):
-            update   (np.ndarray):
-            moment_1 (np.ndarray):
-            moment_2 (np.ndarray):
+            update   (np.ndarray): bias-corrected update direction
+            moment_1 (np.ndarray): updated 1. moment estimate
+            moment_2 (np.ndarray): updated 2. moment estimate
     """
 
     moment_1 = beta_1 * moment_1 + (1 - beta_1) * grad
