@@ -1,5 +1,7 @@
 # User Guide
 
+**NOTE:** The image and video mode may not work on the command line interface on other than Linux (confirmed not to work on MacOS). If this is the case, start the web server to test these.
+
 ## Installation
 
 ### Requirements
@@ -7,9 +9,22 @@
 - Python 3.11+
 - Poetry
 
-## Cloning the repository and setup
+### Cloning the repository and setup
 
-First, clone the repository, navigate to the project, and unzip `dataset.zip` to access the dataset used for training. The image and video mode may not work on the command line interface on other than Linux (confirmed not to work on MacOS). If this is the case, start the web server to test these.
+Clone the reposirory and navigate to the project with
+```bash
+git clone https://github.com/Petuuu/sign-language-recognizer.git
+cd sign-language-recognizer
+```
+
+Unzip the dataset with, for example,
+```bash
+unzip dataset.zip
+```
+
+First, clone the repository, navigate to the project, and unzip `dataset.zip` to access the dataset used for training.
+
+### Dependencies
 
 Create the virtual environment with (may take several minutes)
 ```bash
@@ -18,7 +33,7 @@ poetry install
 
 ## Command line interface
 
-Then, run the program from project root with
+Run the program from project root with
 ```bash
 poetry run python -m src.main
 ```
